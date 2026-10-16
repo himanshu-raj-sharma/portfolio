@@ -30,26 +30,27 @@ export const projects: Project[] = [
   {
     slug: 'acfm-net',
     title: 'ACFM-Net',
-    subtitle: 'Adaptive Cognitive & Fatigue Monitoring — capstone',
+    subtitle: 'Real-Time Fatigue Monitoring — capstone',
     year: '2025',
     category: 'ai-ml',
     featured: true,
     role: 'Team lead · ML, backend, hardware integration',
-    stack: ['Python', 'scikit-learn', 'Flask', 'MongoDB', 'Arduino', 'MQTT'],
+    stack: ['Python', 'PyTorch', 'OpenCV', 'FastAPI', 'React', 'WebSockets'],
     summary:
-      'Wearable-assisted cognitive load monitoring that adapts to the user over time — predicts fatigue from physiological signals and short interactions.',
-    problem: 'TODO: describe the capstone problem statement and constraints in 2–3 sentences.',
+      'Real-time computer vision system that processes webcam frames to detect fatigue and alertness levels — using eye/face landmarks and an LSTM classifier with sub-100ms end-to-end inference.',
+    problem:
+      'Driver fatigue causes thousands of accidents yearly. Existing solutions are expensive wearables or coarse detection. This project provides a non-intrusive, real-time alternative using just a webcam.',
     architecture:
-      'TODO: high-level architecture — sensor layer (Arduino + PPG/EDA), MQTT bridge, Flask API, ML inference service, React dashboard.',
+      'OpenCV + MediaPipe extracts facial landmarks from webcam frames; an LSTM classifier (PyTorch) processes the sequence and outputs an alertness score; FastAPI serves predictions over WebSockets to a live React dashboard.',
     challenges: [
-      'TODO: noisy biosignal data — filtering, windowing, label agreement',
-      'TODO: keeping inference latency low on a Raspberry Pi edge node',
-      'TODO: adaptive personalization with very little per-user data',
+      'Processing webcam frames in real time while keeping inference under 100ms — solved by optimising the MediaPipe pipeline and batching frames.',
+      'Training an LSTM with limited labelled data — addressed through data augmentation and careful windowing of the input sequences.',
+      'Deploying on a resource-constrained environment — optimised model size and used WebSockets for efficient real-time communication.',
     ],
     outcome:
-      'TODO: back this with a real metric. Placeholder — internal demo for faculty review, served predictions at <200ms latency.',
+      'Achieved sub-100ms end-to-end inference latency. Demonstrated to faculty and reviewed as part of the capstone project.',
     links: [
-      { label: 'GitHub', href: 'https://github.com/himanshursharma2004' },
+      { label: 'GitHub', href: 'https://github.com/himanshu-raj-sharma/ACFM-System' },
       { label: 'Case study', href: '/projects/acfm-net' },
     ],
   },
@@ -82,26 +83,27 @@ export const projects: Project[] = [
   {
     slug: 'punyakart-foundation',
     title: 'Punyakart Foundation',
-    subtitle: 'Donation portal · React + Express',
+    subtitle: 'NGO Donation Platform',
     year: '2024',
     category: 'web',
     featured: true,
     role: 'Solo developer · design + build',
-    stack: ['React', 'Express', 'MongoDB', 'Stripe'],
+    stack: ['MongoDB', 'Express', 'React', 'Node.js', 'Razorpay'],
     summary:
-      'Public donation portal for a small NGO — campaign pages, recurring donations, and a transparent donation ledger.',
-    problem: 'TODO: foundation relied on a manual UPI flow with no visibility into recurring donors.',
+      'Public donation portal for a small NGO — campaign pages, secure Razorpay payment integration, and a transparent donation ledger.',
+    problem:
+      'The foundation relied on a manual UPI flow with no visibility into recurring donors and no automated receipts. There was no way to track donation history or issue 80G certificates.',
     architecture:
-      'TODO: React SPA · Express API · MongoDB · Stripe Subscriptions · S3-hosted campaign assets.',
+      'React SPA frontend · Express REST API · MongoDB for data persistence · Razorpay for secure payment processing · Email and WhatsApp notifications for real-time donor updates.',
     challenges: [
-      'TODO: keeping donor PII minimal and auditable',
-      'TODO: receipt generation in a way volunteers could actually run',
+      'Integrating Razorpay securely with proper webhook validation and handling payment confirmations reliably.',
+      'Building the 80G certificate workflow so donors could self-serve without manual intervention from volunteers.',
     ],
     outcome:
-      'TODO: replace with a real metric. Placeholder — processed X donations in the first Y months, zero missed receipts.',
+      'Live at punyakart.com. Processed donations successfully with automated receipts delivered to donors.',
     links: [
-      { label: 'Live site', href: '#' },
-      { label: 'GitHub', href: 'https://github.com/himanshursharma2004' },
+      { label: 'Live site', href: 'https://punyakart.com' },
+      { label: 'GitHub', href: 'https://github.com/himanshu-raj-sharma' },
     ],
   },
   {

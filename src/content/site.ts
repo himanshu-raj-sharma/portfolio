@@ -6,29 +6,29 @@
  * prefill is sourced from here.
  */
 export const siteConfig = {
-  name: 'Himanshu Raj Sharma',
+  name: 'Himanshu Raj',
   shortName: 'Himanshu',
-  initials: 'HRS',
-  role: 'Full-Stack Developer',
+  initials: 'HR',
+  role: 'Software Engineer',
   tagline:
-    'I build fast, scalable websites and apps for businesses and NGOs — clean code, calm interfaces, ships on time.',
+    'I build fast, scalable websites and apps for businesses — clean code, calm interfaces, ships on time.',
   description:
-    'Portfolio of Himanshu Raj Sharma — early-career full-stack developer (Next.js, React, Node, MongoDB, cloud) building freelance websites, apps, and tools for businesses and NGOs.',
-  location: 'Dehradun, India',
-  email: 'TODO: himanshu@example.com', // TODO: replace with real email
-  phone: undefined as string | undefined, // TODO: optional phone
+    'Portfolio of Himanshu Raj — early-career full-stack developer (Next.js, React, Node, MongoDB, cloud) building freelance websites, apps, and tools for businesses and NGOs.',
+  location: 'Gaya, India',
+  email: 'rajhimanshu5522@gmail.com',
+  phone: '+91-8529762940',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
   social: {
-    github: 'https://github.com/himanshursharma2004',
-    linkedin: 'https://www.linkedin.com/in/himanshursharma2004', // TODO: confirm handle
+    github: 'https://github.com/himanshu-raj-sharma',
+    linkedin: 'https://www.linkedin.com/in/himanshu-raj-sharma', // TODO: confirm handle
     twitter: undefined as string | undefined,
-    instagram: undefined as string | undefined,
+    instagram: 'https://www.instagram.com/gurillawarfare',
   },
   availability: {
     status: 'available' as 'available' | 'limited' | 'unavailable',
     label: 'Open to freelance and full-time roles',
   },
-  resumeUrl: '/resume.pdf', // TODO: drop real resume into /public
+  resumeUrl: '/resume.pdf',
   ogImage: '/og.png', // generated at build via opengraph-image.tsx
 } as const;
 

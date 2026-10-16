@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { Container } from '@/components/ui/Container';
@@ -66,9 +67,14 @@ export function About() {
             <Reveal>
               <GlassCard variant="elevated" spotlight className="p-6">
                 <div className="mono-caption">Portrait</div>
-                <div className="mt-4 flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-2xl border border-line bg-[radial-gradient(circle_at_30%_30%,color-mix(in_oklch,var(--accent-1)_30%,transparent),transparent_60%),radial-gradient(circle_at_70%_70%,color-mix(in_oklch,var(--accent-2)_25%,transparent),transparent_60%)] text-text-muted">
-                  {/* TODO: replace with a real headshot via next/image in /public/portrait.{jpg,webp} */}
-                  Portrait · TODO
+                <div className="relative mt-4 aspect-[4/5] w-full overflow-hidden rounded-2xl border border-line">
+                  <Image
+                    src="/portrait.jpg"
+                    alt="Himanshu Raj"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                  />
                 </div>
               </GlassCard>
             </Reveal>
