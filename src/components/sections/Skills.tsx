@@ -6,7 +6,7 @@ import { skillCategories } from '@content/skills';
 
 export function Skills() {
   return (
-    <Section id="skills">
+    <Section id="skills" density="tight">
       <Container size="lg">
         <SectionHeading
           number="04"
@@ -23,12 +23,12 @@ export function Skills() {
           description="Stack and tooling — grouped by what they're good at. I lean toward boring, well-supported choices."
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-block-y grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {skillCategories.map((cat, i) => (
             <Reveal key={cat.title} delay={i * 50}>
-              <GlassCard className="h-full p-6" spotlight>
+              <GlassCard variant="interactive" className="h-full p-6" spotlight>
                 <div className="flex items-baseline justify-between">
-                  <h3 className="display text-xl text-text-primary">{cat.title}</h3>
+                  <h3 className="display-sm text-xl text-text-primary">{cat.title}</h3>
                   <span className="mono-caption">{cat.caption}</span>
                 </div>
                 <ul className="mt-5 flex flex-wrap gap-2">

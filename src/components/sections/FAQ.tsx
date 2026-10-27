@@ -15,7 +15,7 @@ export function FAQ() {
   const baseId = useId();
 
   return (
-    <Section id="faq" aria-labelledby="faq-heading">
+    <Section id="faq" aria-labelledby="faq-heading" density="tight">
       <Container size="lg">
         <SectionHeading
           number="08"
@@ -34,7 +34,7 @@ export function FAQ() {
           Frequently asked questions
         </h2>
 
-        <div className="mt-12 max-w-3xl">
+        <div className="mt-block-y max-w-3xl">
           {faqs.map((f, i) => {
             const open = active === i;
             const headingId = `${baseId}-q-${i}`;

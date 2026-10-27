@@ -6,17 +6,29 @@ type SectionProps = HTMLAttributes<HTMLElement> & {
   children?: ReactNode;
   /** Pulls the section up so it sits flush against the previous one. */
   flush?: boolean;
+  /**
+   * Vertical density. `default` suits standard sections, `tight` for dense
+   * list-heavy ones (projects, toolbox), `loose` for breathing room around
+   * a short, high-impact section (contact, FAQ).
+   */
+  density?: 'tight' | 'default' | 'loose';
 };
 
+const densityClass = {
+  tight: 'py-section-y-sm',
+  default: 'py-section-y',
+  loose: 'py-section-y-lg',
+} as const;
+
 export const Section = forwardRef<HTMLElement, SectionProps>(function Section(
-  { id, className, flush = false, children, ...rest },
+  { id, className, flush = false, density = 'default', children, ...rest },
   ref,
 ) {
   return (
     <section
       ref={ref}
       id={id}
-      className={cn('relative py-24 md:py-36', !flush && 'scroll-mt-24', className)}
+      className={cn('relative', densityClass[density], !flush && 'scroll-mt-24', className)}
       {...rest}
     >
       {children}
@@ -63,9 +75,7 @@ export function SectionHeading({
         </div>
       </div>
       {description && (
-        <p className="max-w-md text-base leading-relaxed text-text-secondary md:text-right">
-          {description}
-        </p>
+        <p className="lead max-w-md md:text-right">{description}</p>
       )}
     </div>
   );

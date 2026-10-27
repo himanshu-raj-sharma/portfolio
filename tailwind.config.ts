@@ -43,11 +43,22 @@ const config: Config = {
         'hero-sm': 'clamp(2.75rem, 8vw, 4.5rem)',
         hero: 'clamp(3.5rem, 12vw, 9rem)',
         'section-title': 'clamp(2.25rem, 5vw, 4rem)',
+        'section-lead': 'clamp(1rem, 1.4vw, 1.125rem)',
       },
       letterSpacing: {
         tightest: '-0.04em',
         tighter: '-0.025em',
         tight: '-0.015em',
+        wider: '0.02em',
+      },
+      spacing: {
+        // Fluid vertical rhythm — scales smoothly instead of snapping at the
+        // md breakpoint, so section gaps feel even at every viewport.
+        'section-y': 'clamp(5rem, 10vw, 9rem)',
+        'section-y-lg': 'clamp(6.5rem, 13vw, 12rem)',
+        'section-y-sm': 'clamp(4rem, 7vw, 6rem)',
+        'block-y': 'clamp(2.5rem, 5vw, 4.5rem)',
+        'stack-y': 'clamp(1.5rem, 3vw, 2.5rem)',
       },
       borderRadius: {
         glass: '1.25rem',

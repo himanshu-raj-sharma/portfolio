@@ -4,7 +4,7 @@ import { ContactForm } from './ContactForm';
 
 export function Contact() {
   return (
-    <Section id="contact">
+    <Section id="contact" density="loose">
       <Container size="lg">
         <SectionHeading
           number="09"
@@ -21,7 +21,7 @@ export function Contact() {
           description="Reply within 24 hours. Share as much or as little as you like — I&apos;ll follow up with the right questions."
         />
 
-        <div className="mt-12">
+        <div className="mt-block-y">
           <ContactForm />
         </div>
       </Container>

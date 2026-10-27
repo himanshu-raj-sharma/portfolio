@@ -22,14 +22,14 @@ export function Experience() {
           }
         />
 
-        <ol className="mt-12 relative ml-3 space-y-8 border-l border-line pl-7">
+        <ol className="mt-block-y relative ml-3 space-y-8 border-l border-line pl-7">
           {experiences.map((exp, i) => (
             <Reveal key={exp.role + exp.org} delay={i * 80}>
               <li className="relative">
                 <span className="absolute -left-[34px] top-2 inline-block h-2.5 w-2.5 rounded-full bg-[linear-gradient(135deg,var(--accent-1),var(--accent-2))] shadow-[0_0_0_4px_color-mix(in_oklch,var(--accent-1)_15%,transparent)]" />
-                <GlassCard className="p-6" spotlight>
+                <GlassCard variant="interactive" className="p-6" spotlight>
                   <p className="mono-caption">{exp.start} → {exp.end}</p>
-                  <h3 className="display mt-2 text-xl text-text-primary">
+                  <h3 className="display-sm mt-2 text-xl text-text-primary">
                     {exp.role}{' '}
                     <span className="text-text-secondary">· {exp.org}</span>
                   </h3>

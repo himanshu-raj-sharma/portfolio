@@ -16,10 +16,13 @@
   --bg-inverse: #f6f6fb;
 
   /* Glass */
-  --glass-bg: rgba(255, 255, 255, 0.045);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-highlight: rgba(255, 255, 255, 0.22);
-  --glass-shadow: rgba(0, 0, 0, 0.65);
+  /* Layered rather than flat so panels stay legible over the accent
+     gradients: a faint tint, a defined edge, and a bright top highlight. */
+  --glass-bg: rgba(255, 255, 255, 0.055);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-highlight: rgba(255, 255, 255, 0.28);
+  --glass-shadow: rgba(0, 0, 0, 0.7);
+  --glass-edge: rgba(255, 255, 255, 0.07);
 
   /* Accent — tuned in OKLCH, falls back to sRGB */
   --accent-1: oklch(0.72 0.22 295); /* electric violet */
@@ -55,10 +58,11 @@
   --bg-elevated: #ffffff;
   --bg-inverse: #05060a;
 
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-border: rgba(20, 20, 30, 0.08);
-  --glass-highlight: rgba(255, 255, 255, 0.9);
-  --glass-shadow: rgba(20, 24, 40, 0.18);
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(20, 20, 30, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.95);
+  --glass-shadow: rgba(20, 24, 40, 0.16);
+  --glass-edge: rgba(15, 18, 28, 0.06);
 
   --accent-1: oklch(0.6 0.22 295);
   --accent-2: oklch(0.7 0.15 200);
@@ -195,18 +199,20 @@ html.lenis body {
   position: relative;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
   box-shadow:
     0 18px 60px -24px var(--glass-shadow),
+    0 0 0 1px var(--glass-edge),
     inset 0 1px 0 0 var(--glass-highlight);
   border-radius: 1.25rem;
 }
 
 .glass-elevated {
-  background: color-mix(in oklch, var(--glass-bg) 130%, transparent);
+  background: color-mix(in oklch, var(--glass-bg) 150%, transparent);
   box-shadow:
     0 30px 90px -30px var(--glass-shadow),
+    0 0 0 1px var(--glass-edge),
     inset 0 1px 0 0 var(--glass-highlight);
 }
 
@@ -215,13 +221,26 @@ html.lenis body {
     transform 0.5s var(--easing-primary, cubic-bezier(0.22, 1, 0.36, 1)),
     border-color 0.4s ease,
     box-shadow 0.5s ease;
+  will-change: transform;
+}
+
+/* Hover lift is applied via a custom property rather than a plain transform
+   so components that already offset the card (e.g. the staggered
+   `md:[--card-offset:2.5rem]` on project cards) can compose both without
+   the hover rule clobbering the resting offset. */
+.glass-interactive {
+  --glass-lift: 0px;
+  --card-offset: 0px;
+  transform: translateY(calc(var(--card-offset) + var(--glass-lift)));
 }
 
 .glass-interactive:hover {
-  border-color: color-mix(in oklch, var(--accent-1) 40%, var(--glass-border));
+  --glass-lift: -4px;
+  border-color: color-mix(in oklch, var(--accent-1) 55%, var(--glass-border));
   box-shadow:
     0 30px 90px -30px var(--glass-shadow),
-    0 0 0 1px color-mix(in oklch, var(--accent-1) 35%, transparent),
+    0 0 0 1px color-mix(in oklch, var(--accent-1) 45%, transparent),
+    0 0 60px -20px color-mix(in oklch, var(--accent-1) 55%, transparent),
     inset 0 1px 0 0 var(--glass-highlight);
 }
 
@@ -248,7 +267,7 @@ html.lenis body {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  opacity: 0.55;
+  opacity: 0.7;
 }
 
 /* Cursor spotlight layer applied to glass surfaces */
@@ -289,6 +308,33 @@ html.lenis body {
   font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 0.95;
+  text-wrap: balance;
+}
+
+/* Smaller display text (card titles, h3) needs looser leading and slightly
+   less aggressive tracking than the oversized hero/section headings —
+   at 24px a 0.95 line-height clips descenders and a -0.04em tracking
+   reads as cramped. */
+.display-sm {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+/* Lead paragraph — sits under section headings, one step above body copy. */
+.lead {
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  line-height: 1.65;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+/* Body copy — slightly looser leading improves long-form readability. */
+.body-text {
+  line-height: 1.7;
+  text-wrap: pretty;
 }
 
 .mono-caption {
@@ -296,7 +342,31 @@ html.lenis body {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 0.72rem;
+  font-weight: 500;
   color: var(--text-muted);
+}
+
+/* Text link with a trailing arrow that nudges on hover. */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-weight: 500;
+  text-underline-offset: 4px;
+  transition: color 0.3s var(--easing-primary, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.link-arrow:hover {
+  color: var(--accent-2);
+  text-decoration: underline;
+}
+
+.link-arrow > svg {
+  transition: transform 0.3s var(--easing-primary, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.link-arrow:hover > svg {
+  transform: translate(0.125rem, -0.125rem);
 }
 
 /* Hide visually but keep for screen readers */

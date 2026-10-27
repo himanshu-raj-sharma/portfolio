@@ -30,7 +30,7 @@ export function Projects() {
   const yDecor = useTransform(scrollYProgress, [0, 1], [80, -80]);
 
   return (
-    <Section id="projects" ref={ref}>
+    <Section id="projects" ref={ref} density="tight">
       <Container size="lg">
         <SectionHeading
           number="03"
@@ -48,7 +48,7 @@ export function Projects() {
         />
 
         <div
-          className="mt-12 flex flex-wrap items-center gap-2"
+          className="mt-stack-y flex flex-wrap items-center gap-2"
           role="group"
           aria-label="Filter projects by category"
         >
@@ -145,7 +145,9 @@ function ProjectCard({
       spotlight
       className={cn(
         'group relative flex h-full flex-col overflow-hidden p-7',
-        offset && 'md:translate-y-10',
+        // Resting stagger offset lives in a CSS var so `.glass-interactive`'s
+        // hover lift composes with it instead of overriding it.
+        offset && 'md:[--card-offset:2.5rem]',
       )}
       data-cursor="View"
     >
@@ -158,7 +160,7 @@ function ProjectCard({
         </Badge>
         <span className="mono-caption">{year}</span>
       </motion.div>
-      <h3 className="display mt-6 text-2xl text-text-primary md:text-3xl">{title}</h3>
+      <h3 className="display-sm mt-6 text-2xl text-text-primary md:text-3xl">{title}</h3>
       <p className="mt-2 text-sm text-text-secondary md:text-base">{subtitle}</p>
       <p className="mt-5 text-[15px] leading-relaxed text-text-secondary">{summary}</p>
       <ul className="mt-5 flex flex-wrap gap-2">
@@ -172,10 +174,7 @@ function ProjectCard({
         ))}
       </ul>
       <div className="mt-auto flex items-center justify-between pt-8">
-        <Link
-          href={`/projects/${slug}`}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-text-primary underline-offset-4 hover:underline"
-        >
+        <Link href={`/projects/${slug}`} className="link-arrow text-sm text-text-primary">
           Read case study <ArrowUpRight size={14} />
         </Link>
       </div>

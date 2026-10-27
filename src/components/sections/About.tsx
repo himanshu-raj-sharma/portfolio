@@ -49,15 +49,15 @@ export function About() {
           description="A short intro, the kind of work I like, and how I run projects."
         />
 
-        <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-12">
+        <div className="mt-block-y grid grid-cols-1 gap-8 md:grid-cols-12">
           <motion.div style={{ y }} className="md:col-span-7">
             <Reveal>
-              <p className="display text-2xl leading-relaxed text-text-primary md:text-3xl">
+              <p className="display-sm text-2xl leading-relaxed text-text-primary md:text-3xl">
                 {wordReveal(PARAGRAPH_A)}
               </p>
             </Reveal>
             <Reveal delay={120}>
-              <p className="mt-6 text-base leading-relaxed text-text-secondary md:text-lg">
+              <p className="body-text mt-6 text-base text-text-secondary md:text-lg">
                 {PARAGRAPH_B}
               </p>
             </Reveal>
@@ -81,12 +81,12 @@ export function About() {
           </div>
         </div>
 
-        <div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
+        <div className="mt-stack-y grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
           {STATS.map((s) => (
             <Reveal key={s.label}>
               <GlassCard variant="interactive" className="p-5" data-cursor="Read">
                 <p className="mono-caption">{s.label}</p>
-                <p className="display mt-3 text-3xl text-text-primary md:text-4xl">{s.value}</p>
+                <p className="display-sm mt-3 text-3xl text-text-primary md:text-4xl">{s.value}</p>
                 <p className="mt-2 text-xs text-text-muted">{s.note}</p>
               </GlassCard>
             </Reveal>

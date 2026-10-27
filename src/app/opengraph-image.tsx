@@ -1,6 +1,11 @@
 import { ImageResponse } from 'next/og';
 import { siteConfig } from '@content/site';
 
+/**
+ * Edge runtime is required here: @vercel/og (Satori) loads its font
+ * resources through WASM, which only works on the edge runtime. Running
+ * this on the Node runtime fails the prerender with "Invalid URL".
+ */
 export const runtime = 'edge';
 export const alt = `${siteConfig.name} — ${siteConfig.role}`;
 export const size = { width: 1200, height: 630 };

@@ -6,7 +6,7 @@ import { education } from '@content/education';
 
 export function Education() {
   return (
-    <Section id="education">
+    <Section id="education" density="tight">
       <Container size="lg">
         <SectionHeading
           number="06"
@@ -22,12 +22,12 @@ export function Education() {
           }
         />
 
-        <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div className="mt-block-y grid grid-cols-1 gap-5 md:grid-cols-2">
           {education.map((ed, i) => (
             <Reveal key={ed.degree} delay={i * 80}>
-              <GlassCard variant="elevated" className="h-full p-7" spotlight>
+              <GlassCard variant="interactive" className="h-full p-7" spotlight>
                 <p className="mono-caption">{ed.start} → {ed.end}</p>
-                <h3 className="display mt-2 text-2xl text-text-primary">{ed.degree}</h3>
+                <h3 className="display-sm mt-2 text-2xl text-text-primary">{ed.degree}</h3>
                 <p className="mt-1 text-sm text-text-secondary">{ed.school}</p>
                 <p className="mt-1 text-sm text-text-muted">{ed.location}</p>
                 {ed.specialization && (

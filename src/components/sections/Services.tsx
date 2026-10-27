@@ -9,7 +9,7 @@ import { services } from '@content/services';
 
 export function Services() {
   return (
-    <Section id="services">
+    <Section id="services" density="tight">
       <Container size="lg">
         <SectionHeading
           number="02"
@@ -26,7 +26,7 @@ export function Services() {
           description="Fixed scope, weekly demos, written estimate before kickoff. Pick a service to pre-fill the contact form."
         />
 
-        <div className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-block-y grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {services.map((s, i) => {
             const Icon = s.icon;
             return (
@@ -38,13 +38,13 @@ export function Services() {
                   data-cursor="Open"
                 >
                   <div className="flex items-start justify-between">
-                    <span className="glass inline-flex h-12 w-12 items-center justify-center rounded-2xl">
+                    <span className="glass inline-flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-500 ease-primary group-hover:scale-110 group-hover:border-[color-mix(in_oklch,var(--accent-1)_45%,var(--glass-border))]">
                       <Icon size={20} strokeWidth={1.6} />
                     </span>
                     <span className="mono-caption">0{i + 1}</span>
                   </div>
 
-                  <h3 className="display mt-6 text-2xl text-text-primary">{s.title}</h3>
+                  <h3 className="display-sm mt-6 text-2xl text-text-primary">{s.title}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-text-secondary md:text-base">
                     {s.description}
                   </p>
@@ -60,10 +60,7 @@ export function Services() {
                     ))}
                   </ul>
 
-                  <a
-                    href={`/?type=${s.id}#contact`}
-                    className="mt-7 inline-flex items-center gap-1.5 self-start text-sm font-medium text-text-primary underline-offset-4 hover:underline"
-                  >
+                  <a href={`/?type=${s.id}#contact`} className="link-arrow mt-7 self-start text-sm text-text-primary">
                     Start a project <ArrowUpRight size={14} />
                   </a>
                 </GlassCard>

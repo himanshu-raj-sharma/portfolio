@@ -4,7 +4,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Loader2, AlertCircle, Github, Linkedin, Mail } from 'lucide-react';
+import { Check, Loader2, AlertCircle, Github, Linkedin, Mail, Calendar } from 'lucide-react';
 import {
   contactSchema,
   projectTypeLabels,
@@ -99,7 +99,7 @@ export function ContactForm() {
                 >
                   <Check size={26} className="text-text-inverse" strokeWidth={2.4} />
                 </motion.span>
-                <h3 className="display mt-5 text-2xl text-text-primary">Got it — thank you.</h3>
+                <h3 className="display-sm mt-5 text-2xl text-text-primary">Got it — thank you.</h3>
                 <p className="mt-3 max-w-md text-text-secondary">
                   I read every message myself and reply within 24 hours. If it&apos;s urgent,
                   ping me on LinkedIn.
@@ -246,23 +246,36 @@ export function ContactForm() {
                   <p className="text-xs text-text-muted">
                     By submitting you agree to be contacted about your inquiry. No newsletters, ever.
                   </p>
-                  <MagneticButton label="Send">
-                    <GlassButton
-                      type="submit"
-                      size="lg"
-                      variant="primary"
-                      disabled={status === 'submitting'}
-                      className="w-full md:w-auto"
-                    >
-                      {status === 'submitting' ? (
-                        <>
-                          <Loader2 size={16} className="animate-spin" /> Sending…
-                        </>
-                      ) : (
-                        <>Send inquiry</>
-                      )}
-                    </GlassButton>
-                  </MagneticButton>
+                  <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
+                    {siteConfig.bookingUrl && (
+                      <GlassLinkButton
+                        as="a"
+                        href={siteConfig.bookingUrl}
+                        variant="secondary"
+                        size="lg"
+                        className="w-full md:w-auto"
+                      >
+                        <Calendar size={16} /> Book a call
+                      </GlassLinkButton>
+                    )}
+                    <MagneticButton label="Send">
+                      <GlassButton
+                        type="submit"
+                        size="lg"
+                        variant="primary"
+                        disabled={status === 'submitting'}
+                        className="w-full md:w-auto"
+                      >
+                        {status === 'submitting' ? (
+                          <>
+                            <Loader2 size={16} className="animate-spin" /> Sending…
+                          </>
+                        ) : (
+                          <>Send inquiry</>
+                        )}
+                      </GlassButton>
+                    </MagneticButton>
+                  </div>
                 </div>
 
                 {status === 'error' && (
@@ -340,11 +353,32 @@ export function ContactForm() {
 
           <p className="mono-caption">Schedule</p>
           <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-            Prefer a live conversation? A booking link will live here once Cal.com is connected.
+            {siteConfig.bookingUrl
+              ? 'Prefer a live conversation? Pick a time that works and I’ll send over a meeting link.'
+              : 'Prefer a live conversation? A booking link will live here once Cal.com is connected.'}
           </p>
-          <GlassLinkButton as="a" href="#contact" variant="ghost" size="sm" className="mt-3" aria-disabled="true">
-            Notify me when booking is live →
-          </GlassLinkButton>
+          {siteConfig.bookingUrl ? (
+            <GlassLinkButton
+              as="a"
+              href={siteConfig.bookingUrl}
+              variant="secondary"
+              size="sm"
+              className="mt-3"
+            >
+              <Calendar size={14} /> Book a call
+            </GlassLinkButton>
+          ) : (
+            <GlassLinkButton
+              as="a"
+              href="#contact"
+              variant="ghost"
+              size="sm"
+              className="mt-3"
+              aria-disabled="true"
+            >
+              Notify me when booking is live →
+            </GlassLinkButton>
+          )}
         </GlassCard>
       </aside>
     </div>

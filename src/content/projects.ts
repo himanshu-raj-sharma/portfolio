@@ -55,32 +55,6 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: 'lele-organic',
-    title: 'LeLe Organic',
-    subtitle: 'Premium Indian organic e-commerce · internship',
-    year: '2025',
-    category: 'web',
-    featured: true,
-    role: 'Full-stack developer · storefront, admin, payments',
-    stack: ['Next.js 15', 'Express', 'MongoDB', 'Razorpay', 'Tailwind'],
-    summary:
-      'Direct-to-consumer organic food storefront with admin dashboard, secure checkout and India-only fulfilment.',
-    problem: 'TODO: founder wanted a premium brand experience without a marketplace fee; inventory had to stay synced across web + manual orders.',
-    architecture:
-      'TODO: Next.js storefront on Vercel · Express API on Render · MongoDB Atlas · Resend for transactional email · Razorpay for payments.',
-    challenges: [
-      'TODO: catalogue sync between admin and storefront',
-      'TODO: GSTIN and invoicing compliance',
-      'TODO: keep the marketing pages snappy on slow connections',
-    ],
-    outcome:
-      'TODO: replace with a real metric. Placeholder — launched MVP behind a feature flag, store admin can add products without a redeploy.',
-    links: [
-      { label: 'Live site (TBD)', href: '#' },
-      { label: 'GitHub (private)', href: '#' },
-    ],
-  },
-  {
     slug: 'punyakart-foundation',
     title: 'Punyakart Foundation',
     subtitle: 'NGO Donation Platform',

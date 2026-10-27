@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { CursorProvider } from '@/components/motion/CursorProvider';
 import { CursorHoverBinder } from '@/components/motion/CursorHoverBinder';
 import { CustomCursor } from '@/components/motion/CustomCursor';
+import { MotionProvider } from '@/components/motion/MotionProvider';
 import { SmoothScroll } from '@/components/motion/SmoothScroll';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import { Navbar } from '@/components/layout/Navbar';
@@ -18,23 +19,25 @@ import { Footer } from '@/components/sections/Footer';
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider>
-      <CursorProvider>
-        <SmoothScroll />
-        <CursorHoverBinder />
-        <div className="app-shell">
-          <div className="film-grain" aria-hidden />
-          <a href="#main" className="skip-link">
-            Skip to content
-          </a>
-          <Navbar />
-          <Preloader />
-          <CustomCursor />
-          <main id="main" className="relative z-10 pt-24">
-            {children}
-          </main>
-          <Footer />
-        </div>
-      </CursorProvider>
+      <MotionProvider>
+        <CursorProvider>
+          <SmoothScroll />
+          <CursorHoverBinder />
+          <div className="app-shell">
+            <div className="film-grain" aria-hidden />
+            <a href="#main" className="skip-link">
+              Skip to content
+            </a>
+            <Navbar />
+            <Preloader />
+            <CustomCursor />
+            <main id="main" className="relative z-10 pt-24">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </CursorProvider>
+      </MotionProvider>
     </ThemeProvider>
   );
 }

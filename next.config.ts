@@ -16,8 +16,13 @@ const csp = [
   "font-src 'self' data:",
   // Next.js dev needs 'unsafe-eval' for HMR; in prod we still allow inline
   // scripts because Next.js inlines small runtime scripts at build time.
-  "script-src 'self' 'unsafe-inline'" + (isDev ? " 'unsafe-eval'" : ''),
-  "connect-src 'self' https://api.resend.com https://*.upstash.io https://vitals.vercel-insights.com",
+  // Vercel Web Analytics + Speed Insights load their bootstrap script from
+  // va.vercel-scripts.com, so that origin must be script-src allowlisted.
+  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com" +
+    (isDev ? " 'unsafe-eval'" : ''),
+  // Analytics beacons are sent to va.vercel-scripts.com; Speed Insights
+  // reports to vitals.vercel-insights.com. Both must be connect-src allowed.
+  "connect-src 'self' https://api.resend.com https://*.upstash.io https://va.vercel-scripts.com https://vitals.vercel-insights.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

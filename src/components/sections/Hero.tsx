@@ -12,9 +12,9 @@ import { siteConfig } from '@content/site';
 import { motionTokens } from '@/lib/motion-tokens';
 import { cn } from '@/lib/utils';
 
+// R3F scene is client-only; `ssr: false` keeps Three.js out of the server bundle.
 const HeroScene = dynamic(() => import('@/components/three/HeroScene'), {
   ssr: false,
-  loading: () => null,
 });
 
 const ROLES = ['Full-Stack Developer', 'Cloud Enthusiast', 'Problem Solver'];
@@ -114,11 +114,10 @@ export function Hero() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: motionTokens.easing.primary, delay: 0.8 }}
-              className="mt-8 max-w-2xl text-lg leading-relaxed text-text-secondary md:text-xl"
+              className="lead mt-8 max-w-2xl text-lg text-text-secondary md:text-xl"
             >
               <RoleRotator /> — {siteConfig.tagline}
             </motion.p>
-
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -180,8 +179,7 @@ export function Hero() {
             >
               <p className="mono-caption">Currently</p>
               <p className="mt-2 text-sm leading-relaxed text-text-primary">
-                Building <span className="font-semibold">LeLe Organic</span> — a premium Indian
-                organic e-commerce storefront.
+                Building <span className="font-semibold">innovative web projects</span> — from full-stack apps to cloud-native solutions.
               </p>
               <hr className="my-5 border-line" />
               <p className="mono-caption">Open to</p>

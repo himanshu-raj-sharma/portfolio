@@ -5,6 +5,8 @@
  * Every value used in `<head>` metadata, footer, navbar and contact form
  * prefill is sourced from here.
  */
+import { env } from '@/lib/env';
+
 export const siteConfig = {
   name: 'Himanshu Raj',
   shortName: 'Himanshu',
@@ -17,7 +19,7 @@ export const siteConfig = {
   location: 'Gaya, India',
   email: 'rajhimanshu5522@gmail.com',
   phone: '+91-8529762940',
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  url: env.NEXT_PUBLIC_SITE_URL,
   social: {
     github: 'https://github.com/himanshu-raj-sharma',
     linkedin: 'https://www.linkedin.com/in/himanshu-raj-sharma', // TODO: confirm handle
@@ -29,7 +31,14 @@ export const siteConfig = {
     label: 'Open to freelance and full-time roles',
   },
   resumeUrl: '/resume.pdf',
-  ogImage: '/og.png', // generated at build via opengraph-image.tsx
+  /**
+   * OG image is generated at build time by src/app/opengraph-image.tsx via
+   * Next.js `ImageResponse`. Next.js auto-generates the route at
+   * /opengraph-image and injects the matching <meta> tags, so this path
+   * points at the generated asset rather than a file in /public.
+   */
+  ogImage: '/opengraph-image',
+  bookingUrl: undefined as string | undefined,
 } as const;
 
 export const navLinks = [

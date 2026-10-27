@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
-    "@react-three/drei": "^9.117.3",
-    "@react-three/fiber": "^8.17.10",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
     "@upstash/ratelimit": "^2.0.5",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
@@ -65,5 +65,10 @@
       "prettier --write"
     ]
   },
-  "packageManager": "pnpm@9.15.0"
+  "packageManager": "pnpm@9.15.0",
+  "pnpm": {
+    "overrides": {
+      "zustand": "^5.0.3"
+    }
+  }
 }
