@@ -4,13 +4,16 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
+import { motionTokens } from '@/lib/motion-tokens';
 import { Check, Loader2, AlertCircle, Github, Linkedin, Mail, Calendar } from 'lucide-react';
 import {
-  contactSchema,
+  createContactSchemaWithHoneypot,
+  generateHoneypotFieldName,
   projectTypeLabels,
   budgetLabels,
   timelineLabels,
   type ContactInput,
+  type ContactInputWithHoneypot,
 } from '@/lib/schemas';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassButton, GlassLinkButton } from '@/components/ui/GlassButton';
@@ -23,6 +26,9 @@ type Status = 'idle' | 'submitting' | 'success' | 'error';
 export function ContactForm() {
   const [status, setStatus] = useState<Status>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [honeypotFieldName] = useState(() => generateHoneypotFieldName());
+
+  const schema = createContactSchemaWithHoneypot(honeypotFieldName);
 
   const {
     register,
@@ -31,8 +37,8 @@ export function ContactForm() {
     reset,
     setValue,
     watch,
-  } = useForm<ContactInput>({
-    resolver: zodResolver(contactSchema),
+  } = useForm<ContactInputWithHoneypot<typeof honeypotFieldName>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       name: '',
       email: '',
@@ -41,9 +47,10 @@ export function ContactForm() {
       budget: 'discuss',
       timeline: 'flexible',
       message: '',
-      website: '',
+      hp_field_name: honeypotFieldName,
+      [honeypotFieldName]: '',
     },
-    mode: 'onBlur',
+    mode: 'onSubmit',
   });
 
   // Pre-fill from query string (used by service CTAs like #contact?type=ecommerce)
@@ -56,7 +63,7 @@ export function ContactForm() {
     }
   }, [setValue]);
 
-  const onSubmit = async (data: ContactInput) => {
+  const onSubmit = async (data: ContactInputWithHoneypot<string>) => {
     setStatus('submitting');
     setErrorMessage(null);
     try {
@@ -88,7 +95,7 @@ export function ContactForm() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.5, ease: motionTokens.easing.primary }}
                 className="flex flex-col items-center justify-center py-12 text-center"
               >
                 <motion.span
@@ -232,13 +239,13 @@ export function ContactForm() {
 
                 {/* Honeypot — hidden from humans, bots fill it */}
                 <div className="visually-hidden" aria-hidden>
-                  <label htmlFor="website">Website</label>
+                  <label htmlFor={honeypotFieldName}>Website</label>
                   <input
-                    id="website"
+                    id={honeypotFieldName}
                     type="text"
                     tabIndex={-1}
                     autoComplete="off"
-                    {...register('website')}
+                    {...(register(honeypotFieldName) as ReturnType<typeof register>)}
                   />
                 </div>
 

@@ -9,7 +9,7 @@ import { GlassLinkButton } from '@/components/ui/GlassButton';
 import { MagneticButton } from '@/components/motion/MagneticButton';
 import { Badge } from '@/components/ui/Badge';
 import { siteConfig } from '@content/site';
-import { motionTokens } from '@/lib/motion-tokens';
+import { motionTokens, prefersReducedMotion } from '@/lib/motion-tokens';
 import { cn } from '@/lib/utils';
 
 // R3F scene is client-only; `ssr: false` keeps Three.js out of the server bundle.
@@ -48,7 +48,7 @@ function SplitHeadline({ text }: { text: string }) {
 function RoleRotator() {
   const [index, setIndex] = useState(0);
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (prefersReducedMotion()) return;
     const t = setInterval(() => setIndex((i) => (i + 1) % ROLES.length), 2800);
     return () => clearInterval(t);
   }, []);
@@ -78,12 +78,25 @@ function RoleRotator() {
 }
 
 export function Hero() {
+  const [showScene, setShowScene] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    const reduce = prefersReducedMotion();
+    const url = new URL(window.location.href);
+    const nofx = url.searchParams.get('nofx') === '1';
+    setShowScene(!coarse && !reduce && !nofx);
+  }, []);
+
   return (
     <section
       aria-labelledby="hero-title"
-      className="relative isolate flex min-h-[88vh] items-center overflow-hidden pt-12 md:pt-20"
+      className={cn(
+        'relative isolate flex items-center overflow-hidden pt-12 md:pt-20',
+        showScene ? 'min-h-[88vh]' : 'min-h-[70vh]'
+      )}
     >
-      <BackdropScene />
+      <BackdropScene show={showScene} />
 
       <Container size="lg" className="relative z-10">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
@@ -196,16 +209,7 @@ export function Hero() {
   );
 }
 
-function BackdropScene() {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const coarse = window.matchMedia('(pointer: coarse)').matches;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const url = new URL(window.location.href);
-    const nofx = url.searchParams.get('nofx') === '1';
-    setShow(!coarse && !reduce && !nofx);
-  }, []);
+function BackdropScene({ show }: { show: boolean }) {
   if (!show) return null;
   return (
     <div

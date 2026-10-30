@@ -1,19 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { contactSchema } from '@/lib/schemas';
+import { createContactSchemaWithHoneypot, type ContactInput } from '@/lib/schemas';
 import { rateLimit } from '@/lib/ratelimit';
 import { sendContactEmails } from '@/lib/email';
 
 export const runtime = 'nodejs';
 // Always run dynamically — never cache.
 export const dynamic = 'force-dynamic';
-
-/**
- * Schema used for the *strict* validation pass. We strip `website`
- * (honeypot) and check it separately so a bot that fills the honeypot
- * sees a 200 — the same shape as a legitimate submission — instead of a
- * 422 that reveals the field exists.
- */
-const strictSchema = contactSchema.omit({ website: true });
 
 /**
  * POST /api/contact
@@ -39,13 +31,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body.' }, { status: 400 });
   }
 
+  // Extract the dynamic honeypot field name from the submission
+  const hpFieldName = (raw as Record<string, unknown> | null)?.hp_field_name;
+  if (typeof hpFieldName !== 'string' || !hpFieldName.startsWith('hp_')) {
+    return NextResponse.json({ error: 'Invalid request.' }, { status: 400 });
+  }
+
   // Honeypot check first (silent 200).
-  const honeypot = (raw as { website?: unknown } | null)?.website;
-  if (typeof honeypot === 'string' && honeypot.length > 0) {
+  const honeypotValue = (raw as Record<string, unknown>)[hpFieldName];
+  if (typeof honeypotValue === 'string' && honeypotValue.length > 0) {
     return NextResponse.json({ ok: true, delivered: false }, { headers: rateLimitHeaders(rl) });
   }
 
-  const parsed = strictSchema.safeParse(raw);
+  // Create schema with the dynamic honeypot field and validate
+  const schemaWithHoneypot = createContactSchemaWithHoneypot(hpFieldName);
+  const parsed = schemaWithHoneypot.safeParse(raw);
   if (!parsed.success) {
     return NextResponse.json(
       { error: 'Validation failed.', details: parsed.error.flatten() },
@@ -53,7 +53,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const result = await sendContactEmails(parsed.data);
+  // Strip honeypot fields before sending to email
+  const { hp_field_name: _hpFieldName, [hpFieldName]: _honeypot, ...rest } = parsed.data;
+  const cleanData = rest as ContactInput;
+
+  const result = await sendContactEmails(cleanData);
   if (!result.delivered) {
     const status = result.reason === 'email-not-configured' ? 202 : 502;
     return NextResponse.json(

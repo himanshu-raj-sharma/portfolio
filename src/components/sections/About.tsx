@@ -107,7 +107,9 @@ export function About() {
  * in. Without the initial, words would flash at full opacity briefly.
  */
 function wordReveal(text: string) {
-  const words = text.split(' ');
+  // Split on word boundaries while keeping punctuation attached to words
+  // Matches: words (including contractions), punctuation, whitespace
+  const tokens = text.match(/(\S+\s*|\s+)/g) ?? [text];
   return (
     <motion.span
       initial="hidden"
@@ -115,7 +117,7 @@ function wordReveal(text: string) {
       viewport={{ once: true, margin: '-15% 0px' }}
       className="block"
     >
-      {words.map((w, i) => (
+      {tokens.map((token, i) => (
         <motion.span
           key={i}
           className="inline-block"
@@ -128,8 +130,7 @@ function wordReveal(text: string) {
             },
           }}
         >
-          {w}
-          {i < words.length - 1 ? '\u00A0' : ''}
+          {token}
         </motion.span>
       ))}
     </motion.span>

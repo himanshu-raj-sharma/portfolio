@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { useCursor } from './CursorProvider';
+import { prefersReducedMotion } from '@/lib/motion-tokens';
 
 /**
  * Custom cursor — small dot + larger trailing ring. The ring morphs into a
@@ -23,7 +24,7 @@ export function CustomCursor() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const touch = window.matchMedia('(pointer: coarse)').matches;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduce = prefersReducedMotion();
     setEnabled(!touch && !reduce);
   }, []);
 

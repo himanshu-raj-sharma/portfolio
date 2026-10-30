@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  zustand: ^5.0.3
-
 importers:
 
   .:
@@ -3006,6 +3003,21 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
+  zustand@4.5.7:
+    resolution: {integrity: sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      immer: '>=9.0.6'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+
   zustand@5.0.15:
     resolution: {integrity: sha512-MpSEjRiBkA9crSYeOUH32rJC7SVqAbm0Fqcqge/bUi2PPoLcBWKOsG+C8mevmpr8TwXHBVkChbbJiyvkE+i/3A==}
     engines: {node: '>=12.20.0'}
@@ -3370,7 +3382,7 @@ snapshots:
       three-mesh-bvh: 0.8.3(three@0.171.0)
       three-stdlib: 2.36.1(three@0.171.0)
       troika-three-text: 0.52.5(three@0.171.0)
-      tunnel-rat: 0.1.2(@types/react@19.0.2)(react@19.0.0)(use-sync-external-store@1.7.0(react@19.0.0))
+      tunnel-rat: 0.1.2(@types/react@19.0.2)(react@19.0.0)
       use-sync-external-store: 1.7.0(react@19.0.0)
       utility-types: 3.11.0
       zustand: 5.0.15(@types/react@19.0.2)(react@19.0.0)(use-sync-external-store@1.7.0(react@19.0.0))
@@ -5743,14 +5755,13 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tunnel-rat@0.1.2(@types/react@19.0.2)(react@19.0.0)(use-sync-external-store@1.7.0(react@19.0.0)):
+  tunnel-rat@0.1.2(@types/react@19.0.2)(react@19.0.0):
     dependencies:
-      zustand: 5.0.15(@types/react@19.0.2)(react@19.0.0)(use-sync-external-store@1.7.0(react@19.0.0))
+      zustand: 4.5.7(@types/react@19.0.2)(react@19.0.0)
     transitivePeerDependencies:
       - '@types/react'
       - immer
       - react
-      - use-sync-external-store
 
   type-check@0.4.0:
     dependencies:
@@ -5975,6 +5986,13 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@3.25.76: {}
+
+  zustand@4.5.7(@types/react@19.0.2)(react@19.0.0):
+    dependencies:
+      use-sync-external-store: 1.7.0(react@19.0.0)
+    optionalDependencies:
+      '@types/react': 19.0.2
+      react: 19.0.0
 
   zustand@5.0.15(@types/react@19.0.2)(react@19.0.0)(use-sync-external-store@1.7.0(react@19.0.0)):
     optionalDependencies:

@@ -5,6 +5,7 @@ import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { motionTokens } from '@/lib/motion-tokens';
 import { Container } from '@/components/ui/Container';
 import { GlassLinkButton } from '@/components/ui/GlassButton';
 import { navLinks, siteConfig } from '@content/site';
@@ -120,7 +121,7 @@ export function Navbar() {
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.4, ease: motionTokens.easing.primary }}
             className="md:hidden"
           >
             <Container size="lg" className="mt-3">

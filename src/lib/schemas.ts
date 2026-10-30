@@ -25,14 +25,34 @@ export const budgetRanges = [
 export const timelines = ['asap', '1-3-months', '3-6-months', 'flexible'] as const;
 
 /**
- * Honeypot field. Bots typically fill any input they find; humans never see
+ * Generates a randomized honeypot field name to avoid bot detection.
+ * Format: hp_<8 random chars>
+ */
+export function generateHoneypotFieldName(): string {
+  if (typeof window === 'undefined') {
+    // Server-side fallback - use a fixed name with timestamp
+    return `hp_${Date.now().toString(36).slice(-8)}`;
+  }
+  // Client-side: generate once per session and store
+  let name = sessionStorage.getItem('hp_field_name');
+  if (!name) {
+    name = `hp_${Math.random().toString(36).slice(2, 10)}`;
+    sessionStorage.setItem('hp_field_name', name);
+  }
+  return name;
+}
+
+/**
+ * Honeypot field validator. Bots typically fill any input they find; humans never see
  * this control. We reject the submission when it contains anything other than
  * `undefined` or `''`.
  */
-const honeypot = z
-  .union([z.string(), z.undefined()])
-  .transform((v) => v ?? '')
-  .refine((v) => v.length === 0, { message: 'Spam detected.' });
+const createHoneypotSchema = (_fieldName: string) =>
+  z
+    .union([z.string(), z.undefined()])
+    .transform((v) => v ?? '')
+    .refine((v) => v.length === 0, { message: 'Spam detected.' })
+    .optional();
 
 export const contactSchema = z.object({
   name: z
@@ -61,10 +81,31 @@ export const contactSchema = z.object({
     .trim()
     .min(20, 'A little more detail helps — at least 20 characters.')
     .max(4000, 'Please keep it under 4000 characters.'),
-  website: honeypot.optional(),
+  // Honeypot field name is dynamic; we'll validate it separately in the API route
+  hp_field_name: z.string().optional(),
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;
+
+/**
+ * Extended contact input that includes the dynamic honeypot field.
+ * Used by the client-side form with a specific honeypot field name.
+ */
+export type ContactInputWithHoneypot<H extends string = string> = ContactInput & {
+  [K in H]: string | undefined;
+};
+
+/**
+ * Creates a contact schema with a dynamic honeypot field.
+ * The returned schema includes the honeypot field in its type.
+ */
+export function createContactSchemaWithHoneypot<H extends string>(honeypotFieldName: H) {
+  return contactSchema.extend({
+    [honeypotFieldName]: createHoneypotSchema(honeypotFieldName),
+  }) as unknown as z.ZodObject<
+    z.ZodRawShape & Record<H, z.ZodOptional<z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodUndefined]>, string, string>>>
+  >;
+}
 
 export const projectTypeLabels: Record<(typeof projectTypes)[number], string> = {
   'full-stack-web': 'Full-stack web app',
