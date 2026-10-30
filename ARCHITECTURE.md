@@ -173,6 +173,7 @@ sequenceDiagram
 ```
 
 **Security layers, in order:**
+
 1. **Per-IP rate limit** (Upstash in prod, in-memory bucket fallback locally) — 5 req/min.
 2. **Honeypot** — a hidden `website` field. Bots fill it; humans don't. Bots that fill it get a silent `200` (no leak).
 3. **Server-side zod** — same schema as the client, but the server strips the honeypot first and uses `.omit()` so the schema can't be tricked.
@@ -258,6 +259,7 @@ graph TD
 ```
 
 **Three rules enforced by the codebase:**
+
 1. **Never animate `layout` properties** — only `transform`, `opacity`, `filter`.
 2. **Nothing over 1.2s** — entrances ease-out, exits faster than entrances.
 3. **One source of truth** — every component imports from `motionTokens`. There is no inline `duration: 0.7` anywhere.
@@ -283,6 +285,7 @@ graph LR
 ```
 
 **Trade-offs taken:**
+
 - **One scene, three.js only loaded on capable clients.** Capacitive touch devices and `prefers-reduced-motion` users get a static gradient instead of a 300 kB WebGL dependency.
 - **DPR capped at `[1, 2]`** — sharper on retina without melting mobile GPUs.
 - **`Suspense fallback={null}`** — avoids a flash of an empty canvas.

@@ -1,4 +1,4 @@
-export type ProjectCategory = 'web' | 'ai-ml' | 'hardware';
+export type ProjectCategory = 'web' | 'ai-ml';
 
 export type Project = {
   slug: string;
@@ -58,7 +58,7 @@ export const projects: Project[] = [
     slug: 'punyakart-foundation',
     title: 'Punyakart Foundation',
     subtitle: 'NGO Donation Platform',
-    year: '2024',
+    year: '2026',
     category: 'web',
     featured: true,
     role: 'Solo developer · design + build',
@@ -77,52 +77,8 @@ export const projects: Project[] = [
       'Live at punyakart.com. Processed donations successfully with automated receipts delivered to donors.',
     links: [
       { label: 'Live site', href: 'https://punyakart.com' },
-      { label: 'GitHub', href: 'https://github.com/himanshu-raj-sharma' },
+      { label: 'GitHub', href: 'https://github.com/himanshu-raj-sharma/punyakart' },
     ],
-  },
-  {
-    slug: 'srshti-foundation',
-    title: 'SRSHTI Foundation',
-    subtitle: 'NGO donation landing page · WordPress / Elementor',
-    year: '2024',
-    category: 'web',
-    featured: true,
-    role: 'Designer & developer',
-    stack: ['WordPress', 'Elementor', 'Contact Form 7', 'Razorpay'],
-    summary:
-      'Single-page donation funnel built so volunteers can edit copy without breaking the layout.',
-    problem: 'TODO: foundation wanted a one-page site focused on a single ask, with a hand-off the team could actually maintain.',
-    architecture:
-      'TODO: Elementor + lightweight theme · Razorpay donate button · Resend for receipts.',
-    challenges: [
-      'TODO: keep it editable without breaking the design',
-      'TODO: accessibility for low-end devices',
-    ],
-    outcome:
-      'TODO: replace with a real metric. Placeholder — live for ~6 months, edited weekly by non-technical volunteers.',
-    links: [{ label: 'Live site', href: '#' }],
-  },
-  {
-    slug: 'self-learning-support-agent',
-    title: 'Self-Learning Support Agent',
-    subtitle: 'Agent that improves from corrected responses',
-    year: '2025',
-    category: 'ai-ml',
-    featured: true,
-    role: 'Designer & developer',
-    stack: ['Python', 'OpenAI API', 'FastAPI', 'Postgres'],
-    summary:
-      'Support agent that takes operator corrections, distills them into rules, and updates its responses over time — without retraining.',
-    problem: 'TODO: small support team kept repeating the same corrections; retraining was out of budget.',
-    architecture:
-      'TODO: FastAPI · Postgres for correction memory · OpenAI for embedding + drafting · rule store as JSON.',
-    challenges: [
-      'TODO: keeping corrections auditable',
-      'TODO: avoiding silent drift in tone',
-    ],
-    outcome:
-      'TODO: replace with a real metric. Placeholder — handled X% of tier-1 tickets after 30 days of corrections.',
-    links: [{ label: 'GitHub', href: 'https://github.com/himanshursharma2004' }],
   },
 ];
 
@@ -130,5 +86,4 @@ export const projectCategories: { id: ProjectCategory | 'all'; label: string }[]
   { id: 'all', label: 'All work' },
   { id: 'web', label: 'Web' },
   { id: 'ai-ml', label: 'AI / ML' },
-  { id: 'hardware', label: 'Hardware' },
 ];

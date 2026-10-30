@@ -13,9 +13,6 @@ export const skillCategories: SkillCategory[] = [
       'React',
       'Next.js (App Router)',
       'Tailwind CSS',
-      'Framer Motion',
-      'GSAP / ScrollTrigger',
-      'React Three Fiber',
     ],
   },
   {
@@ -26,7 +23,7 @@ export const skillCategories: SkillCategory[] = [
   {
     title: 'Databases',
     caption: 'Data',
-    items: ['MongoDB', 'PostgreSQL', 'Prisma', 'Mongoose', 'Redis'],
+    items: ['MongoDB', 'PostgreSQL', 'Prisma', 'Redis'],
   },
   {
     title: 'Cloud / DevOps',
@@ -37,15 +34,5 @@ export const skillCategories: SkillCategory[] = [
     title: 'AI / ML',
     caption: 'Intelligent',
     items: ['Python', 'scikit-learn', 'OpenAI APIs', 'Prompt engineering', 'Agent workflows'],
-  },
-  {
-    title: 'Blockchain',
-    caption: 'Onchain',
-    items: ['Solidity basics', 'ethers.js', 'Web3 wallet auth'],
-  },
-  {
-    title: 'Hardware / Embedded',
-    caption: 'Bits',
-    items: ['Arduino', 'Raspberry Pi', 'MQTT', 'Sensor integration'],
   },
 ];

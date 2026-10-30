@@ -58,19 +58,6 @@ export const services: ServiceItem[] = [
     icon: Smartphone,
   },
   {
-    id: 'wordpress',
-    title: 'WordPress / Elementor for NGOs & SMBs',
-    description:
-      'Practical sites your team can edit themselves. Editorial-friendly CMS, fast load, easy hand-off.',
-    deliverables: [
-      'Theme / Elementor build',
-      'Editable CMS',
-      'Donation / form setup',
-      'Launch + handover',
-    ],
-    icon: PaintBucket,
-  },
-  {
     id: 'backend-api',
     title: 'Backend APIs & Database Design',
     description:

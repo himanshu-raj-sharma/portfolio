@@ -23,7 +23,6 @@ export const siteConfig = {
   social: {
     github: 'https://github.com/himanshu-raj-sharma',
     linkedin: 'https://www.linkedin.com/in/himanshu-raj-sharma', // TODO: confirm handle
-    twitter: undefined as string | undefined,
     instagram: 'https://www.instagram.com/gurillawarfare',
   },
   availability: {

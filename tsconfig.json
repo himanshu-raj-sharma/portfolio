@@ -21,7 +21,8 @@
     },
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "ignoreDeprecations": "5.0"
   },
   "include": [
     "next-env.d.ts",
