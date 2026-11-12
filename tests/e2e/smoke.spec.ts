@@ -67,7 +67,19 @@ test.describe('Contact form', () => {
       return sessionStorage.getItem('hp_field_name');
     });
     if (hpFieldName) {
-      await page.fill(`#${hpFieldName}`, 'bot-filled-value');
+      // The honeypot is visually hidden, so Playwright's actionability checks
+      // (visible / receives events) reject it. Set the value directly and
+      // dispatch the input event React Hook Form listens for.
+      await page
+        .locator(`#${hpFieldName}`)
+        .evaluate((el, value) => {
+          const setter = Object.getOwnPropertyDescriptor(
+            window.HTMLInputElement.prototype,
+            'value',
+          )?.set;
+          setter?.call(el, value);
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+        }, 'bot-filled-value');
     }
 
     await page.locator('button[type="submit"]').click();

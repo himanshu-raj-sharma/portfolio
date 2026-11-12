@@ -2,12 +2,12 @@
 
 import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, Fragment } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section, SectionHeading } from '@/components/ui/Section';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Reveal } from '@/components/ui/Reveal';
-import { motionTokens } from '@/lib/motion-tokens';
+import { motionTokens, usePrefersReducedMotion } from '@/lib/motion-tokens';
 
 const PARAGRAPH_A =
   "I'm a B.Tech Computer Science student at DIT University (Cloud Computing & Blockchain) with a prior Diploma in Electronics Engineering — so I move comfortably between low-level signals and cloud-native web apps. I've shipped real products for businesses and NGOs, not just side projects.";
@@ -30,6 +30,9 @@ export function About() {
   });
   // Subtle parallax on the copy column.
   const y = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  // Scroll-linked transforms ignore MotionConfig's reducedMotion="user",
+  // so they have to be switched off explicitly.
+  const reduced = usePrefersReducedMotion();
 
   return (
     <Section id="about" ref={ref}>
@@ -50,7 +53,7 @@ export function About() {
         />
 
         <div className="mt-block-y grid grid-cols-1 gap-8 md:grid-cols-12">
-          <motion.div style={{ y }} className="md:col-span-7">
+          <motion.div style={reduced ? undefined : { y }} className="md:col-span-7">
             <Reveal>
               <p className="display-sm text-2xl leading-relaxed text-text-primary md:text-3xl">
                 {wordReveal(PARAGRAPH_A)}
@@ -102,6 +105,12 @@ export function About() {
  * enters the viewport. Each word uses a delay computed from its index so
  * the reveal reads as a wave rather than a single fade.
  *
+ * The words are `inline-block` spans separated by a real space *between*
+ * them. Putting the space inside the span does not work: a trailing space
+ * at the end of an inline-block's line is dropped, which glued every word
+ * together ("I'maB.TechComputerScience..."). A space as a sibling text node
+ * both renders and provides the line-break opportunity.
+ *
  * SSR note: `initial={{ opacity: 0 }}` ensures words render at zero
  * opacity before hydration; the `whileInView` handler then animates them
  * in. Without the initial, words would flash at full opacity briefly.
@@ -118,20 +127,22 @@ function wordReveal(text: string) {
       className="block"
     >
       {tokens.map((token, i) => (
-        <motion.span
-          key={i}
-          className="inline-block"
-          initial={{ opacity: 0.15 }}
-          variants={{
-            hidden: { opacity: 0.15 },
-            show: {
-              opacity: 1,
-              transition: { duration: 0.6, delay: i * 0.02, ease: motionTokens.easing.primary },
-            },
-          }}
-        >
-          {token}
-        </motion.span>
+        <Fragment key={i}>
+          <motion.span
+            className="inline-block"
+            initial={{ opacity: 0.15 }}
+            variants={{
+              hidden: { opacity: 0.15 },
+              show: {
+                opacity: 1,
+                transition: { duration: 0.6, delay: i * 0.02, ease: motionTokens.easing.primary },
+              },
+            }}
+          >
+            {token.trim()}
+          </motion.span>
+          {i < tokens.length - 1 ? ' ' : null}
+        </Fragment>
       ))}
     </motion.span>
   );

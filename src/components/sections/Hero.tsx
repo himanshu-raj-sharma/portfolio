@@ -10,6 +10,7 @@ import { MagneticButton } from '@/components/motion/MagneticButton';
 import { Badge } from '@/components/ui/Badge';
 import { siteConfig } from '@content/site';
 import { motionTokens, prefersReducedMotion } from '@/lib/motion-tokens';
+import { onSiteReady } from '@/lib/site-ready';
 import { cn } from '@/lib/utils';
 
 // R3F scene is client-only; `ssr: false` keeps Three.js out of the server bundle.
@@ -19,7 +20,7 @@ const HeroScene = dynamic(() => import('@/components/three/HeroScene'), {
 
 const ROLES = ['Full-Stack Developer', 'Cloud Enthusiast', 'Problem Solver'];
 
-function SplitHeadline({ text }: { text: string }) {
+function SplitHeadline({ text, ready }: { text: string; ready: boolean }) {
   const words = text.split(' ');
   return (
     <h1 className="display text-hero text-text-primary">
@@ -29,7 +30,7 @@ function SplitHeadline({ text }: { text: string }) {
             key={`${word}-${i}`}
             className="inline-block"
             initial={{ y: '110%', opacity: 0 }}
-            animate={{ y: '0%', opacity: 1 }}
+            animate={ready ? { y: '0%', opacity: 1 } : { y: '110%', opacity: 0 }}
             transition={{
               duration: 1,
               ease: motionTokens.easing.expressive,
@@ -53,32 +54,55 @@ function RoleRotator() {
     return () => clearInterval(t);
   }, []);
   return (
-    <span
-      className="relative inline-block min-w-[14ch] align-baseline"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <span className="invisible">{ROLES[0]}</span>
-      {ROLES.map((role, i) => (
-        <motion.span
-          key={role}
-          aria-hidden={i !== index}
-          className={cn(
-            'absolute left-0 top-0 whitespace-nowrap bg-[linear-gradient(120deg,var(--accent-2),var(--accent-1))] bg-clip-text text-transparent',
-          )}
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: i === index ? 1 : 0, y: i === index ? 0 : -18 }}
-          transition={{ duration: 0.6, ease: motionTokens.easing.primary }}
-        >
-          {role}
-        </motion.span>
-      ))}
+    <span className="relative inline-block min-w-[14ch] align-baseline">
+      {/* Layout placeholder — keeps the row from resizing as roles swap.
+          `invisible` (visibility: hidden) also drops it from the a11y tree. */}
+      <span className="invisible" aria-hidden>
+        {ROLES[0]}
+      </span>
+      {/* The rotator changes every 2.8s — announcing each change would be
+          constant noise for screen readers, so the roles are exposed once as
+          static text and the animated copy is hidden from assistive tech. */}
+      <span className="visually-hidden">{ROLES.join(', ')}</span>
+      {ROLES.map((role, i) => {
+        const isActive = i === index;
+        return (
+          <motion.span
+            key={role}
+            aria-hidden
+            className={cn(
+              'absolute left-0 top-0 whitespace-nowrap bg-[linear-gradient(120deg,var(--accent-2),var(--accent-1))] bg-clip-text text-transparent',
+            )}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isActive ? 1 : 0 }}
+            // Fade out first, then fade the next role in. The old version
+            // slid one role up while the next slid in, so the two overlapped
+            // mid-swap and read as two ghosted lines of text.
+            transition={{
+              duration: isActive ? 0.5 : 0.25,
+              delay: isActive ? 0.25 : 0,
+              ease: motionTokens.easing.primary,
+            }}
+          >
+            {role}
+          </motion.span>
+        );
+      })}
     </span>
   );
 }
 
 export function Hero() {
   const [showScene, setShowScene] = useState(false);
+  // The preloader covers the first paint — hold the entrance animation until
+  // the curtain lifts, otherwise it plays out unseen behind the overlay.
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    onSiteReady(() => setReady(true));
+    // Safety net: never leave the hero hidden if the signal is missed.
+    const fallback = window.setTimeout(() => setReady(true), 4000);
+    return () => window.clearTimeout(fallback);
+  }, []);
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const coarse = window.matchMedia('(pointer: coarse)').matches;
@@ -103,7 +127,7 @@ export function Hero() {
           <div className="md:col-span-9">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
               transition={{ duration: 0.6, ease: motionTokens.easing.primary, delay: 0.1 }}
               className="mb-6 flex items-center gap-3"
             >
@@ -120,12 +144,12 @@ export function Hero() {
               <p className="mono-caption mb-4">
                 <Sparkles size={12} className="mr-1 inline-block" strokeWidth={1.5} /> Hi, I&apos;m
               </p>
-              <SplitHeadline text={siteConfig.name} />
+              <SplitHeadline text={siteConfig.name} ready={ready} />
             </div>
 
             <motion.p
               initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
               transition={{ duration: 0.8, ease: motionTokens.easing.primary, delay: 0.8 }}
               className="lead mt-8 max-w-2xl text-lg text-text-secondary md:text-xl"
             >
@@ -133,7 +157,7 @@ export function Hero() {
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
               transition={{ duration: 0.8, ease: motionTokens.easing.primary, delay: 1.0 }}
               className="mt-10 flex flex-wrap items-center gap-3"
             >
@@ -156,7 +180,7 @@ export function Hero() {
 
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              animate={ready ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: 0.8, delay: 1.2 }}
               className="mt-10 flex items-center gap-3"
             >
@@ -186,7 +210,7 @@ export function Hero() {
           <div className="hidden md:col-span-3 md:block">
             <motion.aside
               initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
+              animate={ready ? { opacity: 1, x: 0 } : { opacity: 0, x: 24 }}
               transition={{ duration: 0.8, delay: 1.0, ease: motionTokens.easing.primary }}
               className="glass spotlight sticky top-32 rounded-glass p-6"
             >

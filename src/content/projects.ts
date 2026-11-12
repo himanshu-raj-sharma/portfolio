@@ -51,7 +51,6 @@ export const projects: Project[] = [
       'Achieved sub-100ms end-to-end inference latency. Demonstrated to faculty and reviewed as part of the capstone project.',
     links: [
       { label: 'GitHub', href: 'https://github.com/himanshu-raj-sharma/ACFM-System' },
-      { label: 'Case study', href: '/projects/acfm-net' },
     ],
   },
   {

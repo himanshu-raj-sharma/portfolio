@@ -2,9 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { siteConfig } from '@content/site';
+import { prefersReducedMotion } from '@/lib/motion-tokens';
+import { markSiteReady } from '@/lib/site-ready';
 
 const SESSION_KEY = 'hrsf:preloader-shown';
-const TOTAL_MS = 2200;
+const TOTAL_MS = 1200;
 
 /**
  * Preloader — monogram + name reveal with a 0–100 counter, then a glass
@@ -28,12 +31,18 @@ export function Preloader() {
     if (typeof window !== 'undefined') window.sessionStorage.setItem(SESSION_KEY, '1');
     setCount(100);
     setDone(true);
+    markSiteReady();
   }, []);
 
   // Mount + run counter
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (window.sessionStorage.getItem(SESSION_KEY) === '1') return;
+    // Already shown this session, or the user asked for reduced motion —
+    // skip the curtain entirely and let the page render straight away.
+    if (window.sessionStorage.getItem(SESSION_KEY) === '1' || prefersReducedMotion()) {
+      markSiteReady();
+      return;
+    }
     setVisible(true);
     document.body.style.overflow = 'hidden';
 
@@ -47,6 +56,9 @@ export function Preloader() {
       } else {
         window.sessionStorage.setItem(SESSION_KEY, '1');
         setDone(true);
+        // The curtain starts lifting now — release the hero so its entrance
+        // is actually visible instead of playing behind the overlay.
+        markSiteReady();
       }
     };
     raf = requestAnimationFrame(tick);
@@ -60,6 +72,9 @@ export function Preloader() {
   // Auto-dismiss after wipe completes.
   useEffect(() => {
     if (!done) return;
+    // Release the scroll lock here — the mount effect's cleanup only runs on
+    // unmount, and this component stays mounted after the curtain lifts.
+    document.body.style.overflow = '';
     const t = setTimeout(() => setVisible(false), 700);
     return () => clearTimeout(t);
   }, [done]);
@@ -97,11 +112,11 @@ export function Preloader() {
               className="flex flex-col items-center gap-6"
             >
               <div className="glass relative flex h-24 w-24 items-center justify-center rounded-full text-2xl font-semibold tracking-tighter text-text-primary">
-                <span className="display text-3xl">HRS</span>
+                <span className="display text-3xl">{siteConfig.initials}</span>
                 <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,color-mix(in_oklch,var(--accent-2)_30%,transparent),transparent_60%)] mix-blend-screen" />
               </div>
               <div className="flex flex-col items-center gap-1">
-                <span className="mono-caption">Loading the studio</span>
+                <span className="mono-caption">Loading</span>
                 <span className="display text-xl">{count.toString().padStart(3, '0')}</span>
               </div>
               <button

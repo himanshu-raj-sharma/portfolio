@@ -33,7 +33,7 @@
   /* Text */
   --text-primary: rgba(248, 247, 244, 0.96);
   --text-secondary: rgba(228, 226, 220, 0.74);
-  --text-muted: rgba(200, 198, 192, 0.5);
+  --text-muted: rgba(200, 198, 192, 0.62);
   --text-inverse: #0b0b0f;
 
   /* Lines & dividers */
@@ -48,7 +48,7 @@
   --glass-blur: 22px;
 
   /* Fonts (set by next/font in layout) */
-  --font-display: 'Clash Display', 'General Sans', 'Satoshi', system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
   --font-sans: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
@@ -71,7 +71,9 @@
 
   --text-primary: rgba(12, 14, 22, 0.96);
   --text-secondary: rgba(40, 44, 60, 0.74);
-  --text-muted: rgba(60, 64, 80, 0.5);
+  /* 0.78 alpha keeps small muted text above 4.5:1 on the light background
+     (0.62 measured 3.4:1 and failed WCAG AA). */
+  --text-muted: rgba(60, 64, 80, 0.78);
   --text-inverse: #f6f6fb;
 
   --line: rgba(15, 18, 28, 0.1);
@@ -134,6 +136,26 @@ html.lenis body {
   outline: 2px solid var(--accent-1);
   outline-offset: 3px;
   border-radius: 4px;
+}
+
+/* Custom cursor ----------------------------------------------------------
+   The CustomCursor component draws its own dot + ring, so the native arrow
+   has to be hidden or the user sees two cursors at once. `cursor` inherits,
+   so hiding it on `html` covers every element; text fields keep the native
+   pointer because a hidden caret cursor is unusable.
+
+   Gated to fine pointers + motion-enabled users — the custom cursor does not
+   render on touch devices or under prefers-reduced-motion, so hiding the
+   native one there would leave no cursor at all. */
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html {
+    cursor: none;
+  }
+  input,
+  textarea,
+  select {
+    cursor: auto;
+  }
 }
 
 /* Skip link */

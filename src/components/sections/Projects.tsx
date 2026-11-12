@@ -16,7 +16,7 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { Badge } from '@/components/ui/Badge';
 import { projects, projectCategories } from '@content/projects';
 import type { ProjectCategory } from '@content/projects';
-import { motionTokens } from '@/lib/motion-tokens';
+import { motionTokens, usePrefersReducedMotion } from '@/lib/motion-tokens';
 import { cn } from '@/lib/utils';
 
 export function Projects() {
@@ -27,7 +27,10 @@ export function Projects() {
   );
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const yDecor = useTransform(scrollYProgress, [0, 1], [80, -80]);
+  // Kept deliberately small: the badge row lives inside a padded,
+  // overflow-hidden card, so a large offset slid it into the title.
+  const yDecor = useTransform(scrollYProgress, [0, 1], [10, -10]);
+  const reduced = usePrefersReducedMotion();
 
   return (
     <Section id="projects" ref={ref} density="tight">
@@ -107,6 +110,7 @@ export function Projects() {
                   summary={p.summary}
                   stack={p.stack}
                   yDecor={yDecor}
+                  reduced={reduced}
                 />
               </motion.li>
             ))}
@@ -127,6 +131,7 @@ function ProjectCard({
   summary,
   stack,
   yDecor,
+  reduced,
 }: {
   index: number;
   slug: string;
@@ -137,6 +142,7 @@ function ProjectCard({
   summary: string;
   stack: string[];
   yDecor: MotionValue<number>;
+  reduced: boolean;
 }) {
   const offset = index % 3 === 1;
   return (
@@ -152,7 +158,7 @@ function ProjectCard({
       data-cursor="View"
     >
       <motion.div
-        style={offset ? { y: yDecor } : undefined}
+        style={offset && !reduced ? { y: yDecor } : undefined}
         className="flex items-center justify-between"
       >
         <Badge tone="accent" className="border-0 uppercase">

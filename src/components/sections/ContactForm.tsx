@@ -19,6 +19,10 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassButton, GlassLinkButton } from '@/components/ui/GlassButton';
 import { MagneticButton } from '@/components/motion/MagneticButton';
 import { siteConfig } from '@content/site';
+import {
+  CONTACT_PREFILL_EVENT,
+  type ContactPrefillDetail,
+} from '@/lib/contact-prefill';
 import { cn } from '@/lib/utils';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
@@ -27,6 +31,12 @@ export function ContactForm() {
   const [status, setStatus] = useState<Status>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [honeypotFieldName] = useState(() => generateHoneypotFieldName());
+  // The honeypot field name is random, so it cannot exist on the server and
+  // match the client. Rendering it only after mount keeps `id` and `name` in
+  // sync (the server used to emit a different id than the client, which broke
+  // the label association and caused a hydration mismatch).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const schema = createContactSchemaWithHoneypot(honeypotFieldName);
 
@@ -53,14 +63,27 @@ export function ContactForm() {
     mode: 'onSubmit',
   });
 
-  // Pre-fill from query string (used by service CTAs like #contact?type=ecommerce)
+  // Pre-fill the project type. Two sources:
+  //  - `?type=` in the URL (a shared or bookmarked link)
+  //  - the `contact-prefill` event fired by the service cards
+  // Both are validated against the known options — an unknown value used to
+  // poison the form state and fail validation on submit.
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const params = new URLSearchParams(window.location.search);
-    const type = params.get('type');
-    if (type) {
-      setValue('projectType', type as ContactInput['projectType']);
-    }
+
+    const apply = (raw: string | null | undefined) => {
+      if (!raw) return;
+      if (!Object.keys(projectTypeLabels).includes(raw)) return;
+      setValue('projectType', raw as ContactInput['projectType']);
+    };
+
+    apply(new URLSearchParams(window.location.search).get('type'));
+
+    const onPrefill = (e: Event) => {
+      apply((e as CustomEvent<ContactPrefillDetail>).detail?.type);
+    };
+    window.addEventListener(CONTACT_PREFILL_EVENT, onPrefill);
+    return () => window.removeEventListener(CONTACT_PREFILL_EVENT, onPrefill);
   }, [setValue]);
 
   const onSubmit = async (data: ContactInputWithHoneypot<string>) => {
@@ -233,21 +256,23 @@ export function ContactForm() {
                   />
                   <p className="mt-1 flex justify-between text-[11px] text-text-muted">
                     <span>{watch('message')?.length ?? 0} / 4000</span>
-                    <span>Markdown not rendered — keep it plain.</span>
+                    <span>Plain text only</span>
                   </p>
                 </Field>
 
                 {/* Honeypot — hidden from humans, bots fill it */}
-                <div className="visually-hidden" aria-hidden>
-                  <label htmlFor={honeypotFieldName}>Website</label>
-                  <input
-                    id={honeypotFieldName}
-                    type="text"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    {...(register(honeypotFieldName) as ReturnType<typeof register>)}
-                  />
-                </div>
+                {mounted && (
+                  <div className="visually-hidden" aria-hidden>
+                    <label htmlFor={honeypotFieldName}>Website</label>
+                    <input
+                      id={honeypotFieldName}
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      {...(register(honeypotFieldName) as ReturnType<typeof register>)}
+                    />
+                  </div>
+                )}
 
                 <div className="md:col-span-2 flex flex-col items-start gap-4 pt-2 md:flex-row md:items-center md:justify-between">
                   <p className="text-xs text-text-muted">
@@ -311,7 +336,12 @@ export function ContactForm() {
               </span>
               <div>
                 <p className="text-text-muted">Email</p>
-                <p className="text-text-primary">via the form — fastest response.</p>
+                <a
+                  href={`mailto:${siteConfig.email}`}
+                  className="text-text-primary underline-offset-4 hover:underline"
+                >
+                  {siteConfig.email}
+                </a>
               </div>
             </li>
             <li className="flex items-start gap-3">
@@ -355,37 +385,6 @@ export function ContactForm() {
             Every inquiry gets a personal reply within{' '}
             <span className="text-text-primary">24 hours</span>. If I&apos;m away I&apos;ll tell you when I&apos;ll be back.
           </p>
-
-          <hr className="my-6 border-line" />
-
-          <p className="mono-caption">Schedule</p>
-          <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-            {siteConfig.bookingUrl
-              ? 'Prefer a live conversation? Pick a time that works and I’ll send over a meeting link.'
-              : 'Prefer a live conversation? A booking link will live here once Cal.com is connected.'}
-          </p>
-          {siteConfig.bookingUrl ? (
-            <GlassLinkButton
-              as="a"
-              href={siteConfig.bookingUrl}
-              variant="secondary"
-              size="sm"
-              className="mt-3"
-            >
-              <Calendar size={14} /> Book a call
-            </GlassLinkButton>
-          ) : (
-            <GlassLinkButton
-              as="a"
-              href="#contact"
-              variant="ghost"
-              size="sm"
-              className="mt-3"
-              aria-disabled="true"
-            >
-              Notify me when booking is live →
-            </GlassLinkButton>
-          )}
         </GlassCard>
       </aside>
     </div>

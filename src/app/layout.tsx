@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Fraunces } from 'next/font/google';
 import { siteConfig } from '@content/site';
 import { AppShell } from '@/components/layout/Shell';
 import { env } from '@/lib/env';
@@ -18,6 +18,18 @@ const inter = Inter({
 const mono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
+  display: 'swap',
+});
+
+// Display face for the hero and section headings. This used to be a stack
+// that started with 'Clash Display' / 'Satoshi' — neither of which was ever
+// loaded, so every heading fell back to the browser's Times-like serif and
+// the site read as a mixed-up template. Fraunces is a real variable serif:
+// it keeps the editorial voice the design was going for, and pairs cleanly
+// with Inter.
+const display = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-display',
   display: 'swap',
 });
 
@@ -95,13 +107,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${mono.variable}`}
-      style={
-        {
-          // Fallback display font stack — production uses a real display face.
-          ['--font-display' as string]: "'Clash Display', 'Satoshi', 'General Sans', serif",
-        } as React.CSSProperties
-      }
+      className={`${inter.variable} ${mono.variable} ${display.variable}`}
     >
       <body>
         <JsonLd />

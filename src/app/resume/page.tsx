@@ -4,21 +4,18 @@ import { ArrowLeft, Download } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { Badge } from '@/components/ui/Badge';
 import { siteConfig } from '@content/site';
-import { skillCategories } from '@/content/skills';
 import { experiences } from '@/content/experience';
 import { education } from '@/content/education';
 
 export const metadata: Metadata = {
   title: 'Resume',
-  description: 'Resume of Himanshu Raj Sharma — full-stack developer, Dehradun, India.',
+  description: `Resume of ${siteConfig.name} — full-stack developer, ${siteConfig.location}.`,
   alternates: { canonical: '/resume' },
 };
 
 // Skill categories are listed on the home page; this page focuses on
-// experience + education. Importing here keeps the file self-contained.
-void skillCategories;
+// experience + education.
 
 export default function ResumePage() {
   return (
@@ -103,12 +100,6 @@ export default function ResumePage() {
             {siteConfig.resumeUrl}
           </Link>
           .
-        </p>
-
-        <p className="mt-4">
-          <Badge tone="accent" className="border-0">
-            TODO: drop the PDF into /public/resume.pdf
-          </Badge>
         </p>
       </Container>
     </Section>

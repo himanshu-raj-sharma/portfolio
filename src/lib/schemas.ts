@@ -43,15 +43,19 @@ export function generateHoneypotFieldName(): string {
 }
 
 /**
- * Honeypot field validator. Bots typically fill any input they find; humans never see
- * this control. We reject the submission when it contains anything other than
- * `undefined` or `''`.
+ * Honeypot field validator.
+ *
+ * The field accepts any value here on purpose: the honeypot decision is made
+ * by the API route, which answers a filled honeypot with a silent 200 (the
+ * bot thinks it succeeded). Rejecting it in the shared schema instead meant
+ * the browser refused to submit and the visitor got a dead form with no
+ * message — which also broke real users whose autofill filled the hidden
+ * field.
  */
 const createHoneypotSchema = (_fieldName: string) =>
   z
     .union([z.string(), z.undefined()])
     .transform((v) => v ?? '')
-    .refine((v) => v.length === 0, { message: 'Spam detected.' })
     .optional();
 
 export const contactSchema = z.object({

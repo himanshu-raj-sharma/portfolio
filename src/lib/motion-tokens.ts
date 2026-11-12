@@ -5,6 +5,7 @@
  * Usage:
  *   <motion.div transition={{ duration: motionTokens.duration.base, ease: motionTokens.easing.primary }} />
  */
+import { useEffect, useState } from 'react';
 
 export const motionTokens = {
   duration: {
@@ -33,3 +34,19 @@ export const prefersReducedMotion = (): boolean => {
   if (typeof window === 'undefined') return false;
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 };
+
+/**
+ * React version of `prefersReducedMotion`.
+ *
+ * Returns `false` on the server and on the first client render (so server
+ * and client markup agree), then flips to the real value after mount.
+ * Use it to disable scroll-linked parallax, which `MotionConfig`'s
+ * `reducedMotion="user"` does not cover.
+ */
+export function usePrefersReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    setReduced(prefersReducedMotion());
+  }, []);
+  return reduced;
+}

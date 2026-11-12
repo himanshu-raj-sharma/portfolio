@@ -31,7 +31,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Navbar />
             <Preloader />
             <CustomCursor />
-            <main id="main" className="relative z-10 pt-24">
+            <main id="main" tabIndex={-1} className="relative z-10 pt-24 outline-none">
               {children}
             </main>
             <Footer />

@@ -1,11 +1,15 @@
 'use client';
 
+'use client';
+
 import { ArrowUpRight } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { Section, SectionHeading } from '@/components/ui/Section';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Reveal } from '@/components/ui/Reveal';
 import { services } from '@content/services';
+import { prefillContactType } from '@/lib/contact-prefill';
+import { scrollToSection } from '@/lib/utils';
 
 export function Services() {
   return (
@@ -60,7 +64,17 @@ export function Services() {
                     ))}
                   </ul>
 
-                  <a href={`/?type=${s.id}#contact`} className="link-arrow mt-7 self-start text-sm text-text-primary">
+                  <a
+                    href="#contact"
+                    onClick={(e) => {
+                      // Prefill the form in place — no page reload, no query
+                      // string left behind in the URL.
+                      e.preventDefault();
+                      prefillContactType(s.id);
+                      scrollToSection('contact');
+                    }}
+                    className="link-arrow mt-7 self-start text-sm text-text-primary"
+                  >
                     Start a project <ArrowUpRight size={14} />
                   </a>
                 </GlassCard>

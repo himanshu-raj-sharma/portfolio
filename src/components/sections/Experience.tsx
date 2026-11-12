@@ -24,8 +24,10 @@ export function Experience() {
 
         <ol className="mt-block-y relative ml-3 space-y-8 border-l border-line pl-7">
           {experiences.map((exp, i) => (
-            <Reveal key={exp.role + exp.org} delay={i * 80}>
-              <li className="relative">
+            // <li> must be a direct child of <ol> — the reveal wrapper is a
+            // <div>, so it goes *inside* the list item, not around it.
+            <li key={exp.role + exp.org} className="relative">
+              <Reveal delay={i * 80}>
                 <span className="absolute -left-[34px] top-2 inline-block h-2.5 w-2.5 rounded-full bg-[linear-gradient(135deg,var(--accent-1),var(--accent-2))] shadow-[0_0_0_4px_color-mix(in_oklch,var(--accent-1)_15%,transparent)]" />
                 <GlassCard variant="interactive" className="p-6" spotlight>
                   <p className="mono-caption">{exp.start} → {exp.end}</p>
@@ -43,8 +45,8 @@ export function Experience() {
                     ))}
                   </ul>
                 </GlassCard>
-              </li>
-            </Reveal>
+              </Reveal>
+            </li>
           ))}
         </ol>
       </Container>

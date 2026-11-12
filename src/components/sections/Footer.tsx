@@ -133,7 +133,7 @@ export function Footer() {
                 </a>
               )}
               <a
-                href="#contact"
+                href={`mailto:${siteConfig.email}`}
                 aria-label="Email"
                 className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-line"
               >

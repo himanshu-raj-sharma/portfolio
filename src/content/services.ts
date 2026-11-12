@@ -3,7 +3,6 @@ import {
   LayoutTemplate,
   ShoppingCart,
   Smartphone,
-  PaintBucket,
   Server,
   Cloud,
 } from 'lucide-react';

@@ -37,10 +37,12 @@ describe('contactSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('flags the honeypot when filled', () => {
+  it('does not block submission when the honeypot is filled', () => {
+    // The API route answers a filled honeypot with a silent 200, so the
+    // browser has to send the request in the first place.
     const schema = createContactSchemaWithHoneypot('hp_test123');
     const result = schema.safeParse({ ...baseInput, hp_test123: 'http://spam.example' });
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('accepts the honeypot when missing', () => {
