@@ -31,6 +31,9 @@ test-results
 .env.*.local
 !.env.example
 
+# Vercel CLI project link
+.vercel
+
 # Misc
 .DS_Store
 *.pem

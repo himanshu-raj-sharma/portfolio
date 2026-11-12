@@ -1,6 +1,29 @@
 import type { NextConfig } from 'next';
 
 /**
+ * Canonical site origin.
+ *
+ * Resolution order:
+ *   1. `NEXT_PUBLIC_SITE_URL` — set this in Vercel once you have a custom
+ *      domain. It wins over everything else.
+ *   2. `VERCEL_PROJECT_PRODUCTION_URL` — Vercel injects this automatically on
+ *      production builds, so a first deploy is never served with
+ *      `http://localhost:3000` canonical / OG / sitemap URLs.
+ *   3. `VERCEL_URL` — the current deployment URL (used for previews).
+ *   4. localhost, for local development.
+ *
+ * The value is injected through `env` below so it is inlined into the client
+ * bundle too, not just read on the server.
+ */
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : undefined) ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
+  'http://localhost:3000';
+
+/**
  * Next.js configuration for the portfolio.
  * - React strict mode for dev
  * - Security headers (CSP, XFO, Referrer, Permissions)
@@ -26,6 +49,7 @@ const csp = [
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
+  "object-src 'none'",
 ].join('; ');
 
 const securityHeaders = [
@@ -43,6 +67,9 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Injected into both server and client bundles. Skipped when the variable
+  // is already set, so an explicit value in Vercel is never overwritten.
+  env: process.env.NEXT_PUBLIC_SITE_URL ? {} : { NEXT_PUBLIC_SITE_URL: siteUrl },
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [

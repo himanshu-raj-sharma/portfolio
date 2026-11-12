@@ -71,10 +71,9 @@ CONTACT_FROM_EMAIL=         # verified sender (e.g. no-reply@yourdomain.com)
 UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
 
-# Public
+# Public — canonical origin. Optional on Vercel (it falls back to your
+# *.vercel.app domain); set it once you have a custom domain.
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
-NEXT_PUBLIC_SITE_NAME="Himanshu Raj Sharma"
-NEXT_PUBLIC_GA_ID=
 ```
 
 ---
@@ -119,7 +118,8 @@ src/
 └── ...
 public/
 ├── favicon.svg
-└── resume.pdf           # TODO — drop the real PDF here
+├── portrait.jpg
+└── resume.pdf
 ```
 
 ---
@@ -206,7 +206,9 @@ Add `?nofx=1` to any URL to force-disable heavy effects for screenshots.
 ## Security
 
 - Server-side `zod` validation on every form submission
-- Honeypot field (`website`) — bots fill it, real users don't
+- Honeypot field with a per-session random name (`hp_<random>`) — bots fill
+  it, real users never see it; the API answers a filled honeypot with a
+  silent 200 so the bot learns nothing
 - Per-IP rate limit (Upstash in prod, in-memory fallback locally) — 5 req / min
 - `next.config.ts` ships CSP, X-Frame-Options DENY, Referrer-Policy,
   Permissions-Policy, HSTS, X-Content-Type-Options nosniff
@@ -216,21 +218,71 @@ Add `?nofx=1` to any URL to force-disable heavy effects for screenshots.
 
 ## Deployment (Vercel)
 
-1. Push the repo to GitHub.
-2. Create a new Vercel project pointing at the repo.
-3. Vercel auto-detects Next.js. The framework preset is correct out of the box.
-4. Add the env vars from `.env.example` under **Settings → Environment Variables**.
-   Recommended scope: Production for email + Upstash keys.
-5. **NOT** a fork step: enable "Override" on `NEXT_PUBLIC_SITE_URL` and set it
-   to your production domain (e.g. `https://himanshusharma.dev`).
-6. Deploy. After the first deploy, submit your sitemap in Google Search
-   Console (`/sitemap.xml`) and verify the OG image in the Twitter Card
-   validator.
+The repo is Vercel-ready as-is — no adapter, no `vercel.json`, no build
+flags. Vercel auto-detects Next.js and the framework preset is correct out
+of the box.
 
-Optional: run `pnpm dlx next-sitemap` post-build if you want the precomputed
-`public/sitemap.xml` + `public/robots.txt`. The App Router versions in
-`src/app/sitemap.ts` and `src/app/robots.ts` are already wired and will be
-served automatically.
+**1. Push the repo to GitHub**
+
+```bash
+git push origin main
+```
+
+**2. Create the project**
+
+Vercel dashboard → *Add New* → *Project* → import `himanshu-raj-sharma/portfolio`.
+Leave the framework preset as **Next.js** and the build command as
+`pnpm build`. Vercel reads `packageManager` and `engines` from
+`package.json` and installs with pnpm 9.15 on Node 22.
+
+**3. Add the environment variables**
+
+*Settings → Environment Variables* → add for **Production** (and **Preview**
+if you want previews to send mail):
+
+| Variable | Required | Notes |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | recommended | Your canonical origin, e.g. `https://your-domain.com`. **Optional** — see below |
+| `RESEND_API_KEY` | for email | https://resend.com/api-keys |
+| `CONTACT_TO_EMAIL` | for email | Inbox that receives inquiries |
+| `CONTACT_FROM_EMAIL` | for email | Verified sender on your domain |
+| `UPSTASH_REDIS_REST_URL` | optional | Distributed rate limiting (recommended on Vercel) |
+| `UPSTASH_REDIS_REST_TOKEN` | optional | — |
+
+Without the Resend keys the contact form still validates and returns
+success, but nothing is emailed — the API logs the submission instead.
+
+**Canonical URL without any configuration:** when `NEXT_PUBLIC_SITE_URL` is
+not set, the build falls back to `VERCEL_PROJECT_PRODUCTION_URL` (your
+`*.vercel.app` domain) and then to the deployment URL, so the first deploy
+never publishes `http://localhost:3000` canonical links, OG image URLs or
+sitemap entries. Set the variable once you attach a custom domain.
+
+**4. Deploy.** Pushing to `main` re-deploys automatically. Check the build
+log for `✓ Compiled successfully`.
+
+**5. After the first deploy**
+
+- Project → *Settings → General* → turn on **Web Analytics** and
+  **Speed Insights** (the site ships both; without them their bootstrap
+  scripts 404 harmlessly).
+- Add a custom domain under *Settings → Domains*, then set
+  `NEXT_PUBLIC_SITE_URL` to it and redeploy.
+- Submit `https://your-domain.com/sitemap.xml` in Google Search Console and
+  check the OG image in the Twitter Card validator.
+
+**What is already handled for you**
+
+- `/sitemap.xml` and `/robots.txt` are generated from `src/app/sitemap.ts`
+  and `src/app/robots.ts` — no post-build step needed.
+- `/opengraph-image` is generated at build time by `@vercel/og` on the edge
+  runtime.
+- Security headers (CSP, HSTS, X-Frame-Options, Permissions-Policy,
+  Referrer-Policy, nosniff) are applied by `next.config.ts`.
+- The contact API reads the client IP from `x-forwarded-for`, which Vercel
+  sets.
+- `NEXT_PUBLIC_*` variables are inlined at build time by Next.js, so the
+  canonical URL is baked into the static pages.
 
 ---
 
@@ -239,10 +291,12 @@ served automatically.
 These decisions were made during the build so the single-pass run didn't
 block on questions:
 
-- **Fonts**: `--font-display` falls back to **Clash Display / Satoshi /
-  General Sans** (Fontshare). The face isn't on Google Fonts; install via
-  Fontshare if you want the exact file, otherwise the system serif fallback
-  reads well. The CSS variable is the integration point.
+- **Fonts**: the display face is **Fraunces**, loaded through `next/font`
+  (self-hosted, no render-blocking request to a font CDN). It is paired with
+  Inter for body copy and JetBrains Mono for labels. An earlier version
+  referenced Clash Display / Satoshi, which were never loaded and silently
+  fell back to the browser serif — that is what the headings looked like
+  before.
 - **Light-mode color pair** uses a cooler pastel gradient, deliberately
   avoiding the same hue pair as dark mode — the visual identity shifts
   instead of merely inverting.
@@ -268,29 +322,27 @@ block on questions:
 These are deliberately marked `TODO:` in the codebase so they're easy to
 search. The build still runs without them.
 
-1. **Email + social handles** — `src/content/site.ts`
-   - `email`, `phone?`, `social.github`, `social.linkedin`, `social.twitter?`,
-     `social.instagram?`
-2. **Resume PDF** — drop `public/resume.pdf` (currently empty)
-3. **Headshot** — `src/components/sections/About.tsx` has a portrait
-   placeholder; replace with `<Image src="/portrait.webp" ... />`
-4. **Project details** — `src/content/projects.ts`
+1. **LinkedIn handle** — `src/content/site.ts` (`social.linkedin`) — confirm
+   the exact profile URL
+2. **Project details** — `src/content/projects.ts`
    - `problem`, `architecture`, `challenges`, `outcome` for each project
-   - Optional `cover` and `screenshots[]` URLs
-5. **Internship details** — `src/content/experience.ts` (Doon Animal Welfare
-   Foundation): dates and bullets
-6. **Diploma institution + dates** — `src/content/education.ts`
-7. **Graduation year / expected date** — `src/content/education.ts`
-8. **Optional: Cal.com embed** — `src/components/sections/ContactForm.tsx`
-   has a placeholder; swap in an `<iframe>` or inline embed when ready
-9. **Display font** — install Clash Display from Fontshare, drop the WOFF2
-   into `public/fonts/`, and add the `@font-face` block to globals.css
-10. **OG image font rendering** — the `opengraph-image.tsx` route uses
-    sans-serif; for branded OG art, embed the display font as a TTF and
-    pass it via `ImageResponse({ ..., fonts: [{ name, data, weight, style }] })`
-11. **Verify with Lighthouse** on a deployed preview URL — adjust
-    `backdrop-blur`, font loading strategy, or image sizes if needed
-12. **Verify with axe / pa11y** once content is final
+   - Optional `cover` and `screenshots[]` URLs — the case-study page does not
+     render images yet, and a portfolio without screenshots is weak evidence
+3. **Case-study links** — `src/content/projects.ts` — the GitHub links for
+   `acfm-net` and `punyakart-foundation` should point at real repositories
+4. **Name consistency** — the site uses "Himanshu Raj" while the resume and
+   some metadata say "Himanshu Raj Sharma" — pick one
+5. **Location consistency** — `Gaya` vs `Dehradun` appears in the JSON-LD,
+   the footer, the resume metadata and the keywords — decide the story
+   (e.g. "based in Gaya, studied in Dehradun") and apply it everywhere
+6. **Optional: Cal.com embed** — `src/content/site.ts` has `bookingUrl` set
+   to `undefined`; set it and the "Book a call" button appears
+7. **OG image font rendering** — the `opengraph-image.tsx` route uses
+   sans-serif; for branded OG art, embed the display font as a TTF and
+   pass it via `ImageResponse({ ..., fonts: [{ name, data, weight, style }] })`
+8. **Verify with Lighthouse** on a deployed preview URL — adjust
+   `backdrop-blur`, font loading strategy, or image sizes if needed
+9. **Verify with axe / pa11y** once content is final
 
 ---
 

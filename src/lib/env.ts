@@ -22,14 +22,10 @@ const publicSchema = z.object({
     .string()
     .url()
     .default('http://localhost:3000'),
-  NEXT_PUBLIC_SITE_NAME: z.string().default('Himanshu Raj Sharma'),
-  NEXT_PUBLIC_GA_ID: z.string().optional(),
 });
 
 type PublicInput = {
   NEXT_PUBLIC_SITE_URL?: string | undefined;
-  NEXT_PUBLIC_SITE_NAME?: string | undefined;
-  NEXT_PUBLIC_GA_ID?: string | undefined;
 };
 
 type ServerInput = {
@@ -55,8 +51,6 @@ function parseOr<T extends z.ZodTypeAny>(schema: T, fallback: z.input<T>): z.out
 
 const publicEnv = parseOr(publicSchema, {
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
-  NEXT_PUBLIC_SITE_NAME: process.env.NEXT_PUBLIC_SITE_NAME,
-  NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
 } satisfies PublicInput);
 
 const serverEnv: z.output<typeof serverSchema> =
