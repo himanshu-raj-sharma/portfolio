@@ -53,6 +53,13 @@ Visit http://localhost:3000.
 | `pnpm test:e2e`   | Playwright smoke (requires `pnpm test:e2e:install`)   |
 | `pnpm format`     | Prettier write                                        |
 
+> **Do not add `node-linker=hoisted` to a local `.npmrc`.** pnpm's default
+> (isolated) linker is what Vercel uses. Hoisting flattens `node_modules`
+> so *transitive* dependencies become importable — which hides a missing
+> direct dependency until the production build fails with
+> *"Cannot find module …"*. If a local `.npmrc` is needed, keep it in sync
+> with Vercel's defaults and never rely on hoisting.
+
 ---
 
 ## Environment

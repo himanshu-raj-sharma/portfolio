@@ -20,6 +20,9 @@ importers:
       '@upstash/ratelimit':
         specifier: ^2.0.5
         version: 2.2.0(@upstash/redis@1.39.0)
+      '@upstash/redis':
+        specifier: ^1.39.0
+        version: 1.39.0
       '@vercel/analytics':
         specifier: ^1.4.1
         version: 1.6.1(next@15.1.12(@playwright/test@1.64.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
