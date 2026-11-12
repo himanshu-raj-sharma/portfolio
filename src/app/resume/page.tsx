@@ -55,13 +55,14 @@ export default function ResumePage() {
               <li key={exp.role + exp.org}>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="display text-lg text-text-primary">
-                    {exp.role} · {exp.org}
+                    {exp.role}
+                    {exp.tag ? ` (${exp.tag})` : ''} · {exp.org}
                   </h3>
                   <span className="mono-caption">
                     {exp.start} – {exp.end}
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-text-muted">{exp.location}</p>
+                {exp.location && <p className="mt-1 text-sm text-text-muted">{exp.location}</p>}
                 <ul className="mt-3 space-y-2 text-sm text-text-secondary">
                   {exp.bullets.map((b) => (
                     <li key={b}>— {b}</li>

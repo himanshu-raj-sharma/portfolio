@@ -17,7 +17,7 @@ const PARAGRAPH_B =
 
 const STATS = [
   { label: 'Production projects', value: '5+', note: 'Web, mobile, embedded' },
-  { label: 'Internship', value: '1', note: 'DAWF, Dehradun' },
+  { label: 'Freelance clients', value: '2', note: 'DAWF · Shalvika' },
   { label: 'Response time', value: '<24h', note: 'For inquiries' },
   { label: 'Stack focus', value: 'TS · Node', note: 'Next.js + Mongo' },
 ] as const;

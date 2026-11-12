@@ -1,6 +1,7 @@
 import { Container } from '@/components/ui/Container';
 import { Section, SectionHeading } from '@/components/ui/Section';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { Badge } from '@/components/ui/Badge';
 import { Reveal } from '@/components/ui/Reveal';
 import { experiences } from '@content/experience';
 
@@ -30,12 +31,19 @@ export function Experience() {
               <Reveal delay={i * 80}>
                 <span className="absolute -left-[34px] top-2 inline-block h-2.5 w-2.5 rounded-full bg-[linear-gradient(135deg,var(--accent-1),var(--accent-2))] shadow-[0_0_0_4px_color-mix(in_oklch,var(--accent-1)_15%,transparent)]" />
                 <GlassCard variant="interactive" className="p-6" spotlight>
-                  <p className="mono-caption">{exp.start} → {exp.end}</p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                    <p className="mono-caption">{exp.start} → {exp.end}</p>
+                    {exp.tag && (
+                      <Badge tone="accent" className="border-0 text-[10px] uppercase tracking-wider">
+                        {exp.tag}
+                      </Badge>
+                    )}
+                  </div>
                   <h3 className="display-sm mt-2 text-xl text-text-primary">
                     {exp.role}{' '}
                     <span className="text-text-secondary">· {exp.org}</span>
                   </h3>
-                  <p className="mt-1 text-sm text-text-muted">{exp.location}</p>
+                  {exp.location && <p className="mt-1 text-sm text-text-muted">{exp.location}</p>}
                   <ul className="mt-5 space-y-3">
                     {exp.bullets.map((b, idx) => (
                       <li key={idx} className="flex gap-3 text-sm leading-relaxed text-text-secondary">
