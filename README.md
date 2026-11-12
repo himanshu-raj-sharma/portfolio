@@ -252,6 +252,23 @@ if you want previews to send mail):
 Without the Resend keys the contact form still validates and returns
 success, but nothing is emailed — the API logs the submission instead.
 
+### Free-tier notes
+
+| Service | Free tier | Watch out for |
+| --- | --- | --- |
+| **Resend** | 100 emails/day, 3,000/month | Each inquiry sends **two** emails (you + the visitor), so ~50 inquiries/day. With `onboarding@resend.dev` you can only send **to your own Resend account email** — the visitor auto-reply will be rejected. Verify a domain (free) and use it as `CONTACT_FROM_EMAIL`, e.g. `no-reply@yourdomain.com`. A rejected auto-reply no longer fails the inquiry — only your copy has to land. |
+| **Upstash Redis** | 10,000 commands/day | Without it the rate limiter falls back to an in-memory bucket, which is **per serverless instance** on Vercel and therefore does not throttle a real attacker. Set both vars. |
+| **Vercel Hobby** | 100 GB bandwidth/month, 6,000 build minutes/month | Fine for a portfolio. Note the Hobby plan is for personal, non-commercial use — read Vercel's terms if you use the site to win paid work. |
+
+**Deploying the email path**
+
+1. Create a free account at [resend.com](https://resend.com) → API Keys → create one.
+2. Resend → Domains → add your domain → add the DNS records they give you
+   (A/CNAME/MX + SPF + DKIM) at your registrar.
+3. Wait for the domain to verify, then use `no-reply@yourdomain.com` as
+   `CONTACT_FROM_EMAIL` and your inbox as `CONTACT_TO_EMAIL`.
+4. Send a test inquiry on the deployed URL and confirm both emails arrive.
+
 **Canonical URL without any configuration:** when `NEXT_PUBLIC_SITE_URL` is
 not set, the build falls back to `VERCEL_PROJECT_PRODUCTION_URL` (your
 `*.vercel.app` domain) and then to the deployment URL, so the first deploy

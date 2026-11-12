@@ -317,7 +317,16 @@ export function ContactForm() {
                     className="md:col-span-2 mt-2 flex items-start gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300"
                   >
                     <AlertCircle size={16} className="mt-0.5" />
-                    <span>{errorMessage ?? 'Could not send. Please try again.'}</span>
+                    <span>
+                      {errorMessage ?? 'Could not send. Please try again.'}{' '}
+                      <a
+                        href={`mailto:${siteConfig.email}`}
+                        className="underline underline-offset-4 hover:text-red-200"
+                      >
+                        Email me directly
+                      </a>{' '}
+                      instead.
+                    </span>
                   </div>
                 )}
               </motion.form>

@@ -111,7 +111,10 @@ export async function sendContactEmails(input: ContactInput): Promise<{
   }
 
   try {
-    const [owner, confirmation] = await Promise.all([
+    // allSettled, not all: on Resend's free tier the auto-reply to the
+    // visitor fails unless the sender domain is verified. That must not
+    // throw away the inquiry that did reach the owner.
+    const [owner, confirmation] = await Promise.allSettled([
       sendViaResend({
         from: fromAddr,
         to: ownerTo,
@@ -127,11 +130,29 @@ export async function sendContactEmails(input: ContactInput): Promise<{
         text: renderConfirmationText(input),
       }),
     ]);
-    if (owner.error || confirmation.error) {
+
+    if (owner.status === 'rejected') {
       const reason =
-        owner.error?.message ?? confirmation.error?.message ?? 'Resend returned an error';
-      console.error('[contact] Resend reported error:', reason);
+        owner.reason instanceof Error ? owner.reason.message : 'Unknown email error';
+      console.error('[contact] Resend failed:', reason);
       return { delivered: false, reason };
+    }
+    if (owner.value?.error) {
+      console.error('[contact] Resend reported error:', owner.value.error.message);
+      return { delivered: false, reason: owner.value.error.message };
+    }
+
+    // The owner copy landed — a missing auto-reply is only a warning.
+    if (confirmation.status === 'rejected') {
+      console.error(
+        '[contact] Confirmation email failed (the inquiry itself was delivered):',
+        confirmation.reason,
+      );
+    } else if (confirmation.value?.error) {
+      console.error(
+        '[contact] Confirmation email rejected (the inquiry itself was delivered):',
+        confirmation.value.error.message,
+      );
     }
     return { delivered: true };
   } catch (err) {

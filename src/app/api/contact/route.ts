@@ -65,6 +65,8 @@ export async function POST(req: NextRequest) {
         ok: false,
         delivered: false,
         reason: result.reason,
+        // The form shows this to the visitor, so it has to be actionable.
+        ...(status === 502 ? { error: 'Could not send the message just now.' } : {}),
         ...(status === 202
           ? {
               info: 'Email is not configured — your message was validated and logged locally only.',
